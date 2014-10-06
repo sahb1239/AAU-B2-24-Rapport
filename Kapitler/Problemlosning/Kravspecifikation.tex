@@ -1,0 +1,45 @@
+% Skrevet af Jimmi.
+% Sidst rettet: 04-12-2013, 13:35, Jimmi
+% Sidst rettet: 10-12-2013, 03:00, Søren
+% Sidst rettet: 13-12-2013, 23:18, Martin
+% Sidst rettet: 14-12-2013, 11:18, Jimmi
+Formålet med kravspecifikation, er at få specificerede entydige krav til programmets kunnen og samlede funktion. Dette er vigtigt, for at programmets samlede funktion, afspejler den samfundsrelateret problemstilling, som ønskes løst. Hvordan og hvorledes programmet bør konstrueres, for at afdække de specificerede produktkrav, vil ligeledes fremgå i det følgende afsnit. På baggrund af problemanalysen (kapitel \ref{sec:problembeskrivelse}), blev der afslutningsvis opstillet en problemformulering. Kravspecifikationens formål, er at skitsere de fundamentale produkt-funktionaliteter, der er påkrævet, for at softwareløsningen vil opfylde den konkrete problemformulering. Denne kravspecifikation er på baggrund af ovenstående, blevet udarbejdet med fokus på følgende: \\
+
+At mindske brugernes tidsforbrug og øge komfortabiliteten under interaktion mellem bruger og system, ved at kombinere Zensehomes system med stemmestyringscontrollere, med henblik på at kunne lette følgende handlingsprocesser:
+\begin{itemize}
+    \item Øge brugerkomforten ved at gøre det muligt, at alle handlinger kan foretages uafhængigt af rummet brugeren befinder sig i
+    \item Mulighed for at oprette, slette og redigere systemets controllere, brugere samt scenarier
+    \item Opsætte rettighedssystem, så ikke alle brugere har adgang til det samme
+    \item Give tilbagemeldinger ved fejlmeddelelser – såvel som accepterede handlinger, så brugeren ikke er tvivl om den ønskede handling er modtaget som korrekt input
+\end{itemize}
+\hspace*{\fill} \\
+Som nævnt i afsnit \ref{sec:problemer_med_stemmestyring}, er der dog nogle problemer forbundet med stemmestyring. Disse problemer vil gruppen forsøge at løse med følgende funktioner:
+\begin{itemize}
+    \item Konstruere en stavekontrol-funktion, som vil behandle brugerinputtet, og autokorrigere det til det korrekte
+    \item Opstille en tilstandsmaskine, som vil automatisk sætte programmet i forskellige tilstande, afhængig af validering.
+\end{itemize}
+    
+For at overstående kravspecifikation kan realiseres, er der et behov for at dissekere trinene igennem en gennemgang af relevant teori (Afsnit \ref{sec:teori}). Ydermere er der et behov for en systematisk udspecificering af handlingprocessen, og hvornår disse handlinger bør udføres mest hensigtsmæssigt. \\
+
+
+
+% Skrevet af Jimmi.
+% Sidst rettet: 04-12-2013, 13:35, Jimmi
+% Sidst rettet: 10-12-2013, 03:00, Søren
+%Formålet med kravspecifikation, er at få specificerede entydige krav til programmets kunnen og samlede funktion. Dette er vigtigt, for at programmets samlede funktion, afspejler den samfundsrelateret problemstilling, som ønskes løst. Hvordan og hvorledes programmet bør konstrueres, for at afdække de specificerede produktkrav, vil ligeledes fremgå i det følgende afsnit. På baggrund af problemanalysen (kapitel \ref{sec:problembeskrivelse}), blev der afslutningsvis opstillet en problemformulering. Kravspecifikationens formål, er at skitsere de fundamentale produkt-funktionaliteter, der er påkrævet, for at softwareløsningen vil opfylde den konkrete problemformulering. Denne kravspecifikation er på baggrund af ovenstående, blevet udarbejdet med følgende fokuspunkter: 
+
+%\begin{enumerate}
+%    \item Mindske brugernes tidsforbrug og øge komfortabiliteten under interaktion mellem bruger og system:
+%    \begin{itemize}
+%        \item Kombinere Zensehome’s system med stemmestyrings%controllere, for derved at kunne lette følgende handlingsprocesser:
+%        \begin{itemize}
+%            \item Øge brugerkomforten ved at gøre det muligt, at alle handlinger kan foretages uafhængigt af rummet brugeren befinder sig i
+%            \item Mulighed for at oprette, slette og redigere systemets controllere, brugere samt scenarier
+%            \item Opsætte stemmegenkendelse,\mafix{Det vurderes senere om denne kan nå at blive færdig.} som vil give de forskellige beboere mulighed for at definere forskellige prioriteter og rettigheder
+%            \item Give tilbagemeldinger ved fejlmeddelelser – såvel som accepterede handlinger, så brugeren ikke er tvivl om den ønskede handling er accepteret
+%            \item Konstruere en funktion, eventuelt i form af en stavekontrol, der vil autokorrigere brugeren ved små stavefejl, spørge brugeren om fundne retteord er korrekt ved størrer stavefejl.
+%        \end{itemize}
+%    \end{itemize}
+%\end{enumerate}
+
+%For at overstående kravspecifikation kan realiseres, er der et behov for at dissekere trinene igennem teoretisk udredelighed (Afsnit \ref{sec:teori}). Ydermere er der et behov for at systematisk udspecificere handlingprocessen, og hvornår disse handlinger bør udføres mest hensigtsmæssigt.

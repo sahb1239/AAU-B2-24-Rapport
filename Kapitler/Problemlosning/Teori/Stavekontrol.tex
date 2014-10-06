@@ -1,0 +1,79 @@
+%Skrevet af Martin, Søren og Jimmi.
+%Sidst rettet: 03-12-2013, 16:40, Jimmi
+\label{sec:stavekontrol}
+Stavekontrol i programmeringssammenhæng blev første gang, fremvist af Ralph Gorin i året 1971. Løbende er stavekontrol-faciliteten, blevet en naturlig integration af skriveprogrammer, hvor det anses af de fleste, som værende et uundværligt korrektionsværktøj. \\ Efter Ralph Gorin’s fremvisning, er der løbende kommet forskellige bud på, hvordan teknologien kunne forbedres, specificeres eller tilpasses til forskellige problemstillinger. Stavekontrol er et kæmpe emne i sig selv, og derfor vil der i det kommende afsnit redegøres der for nogle af mest centrale metoder, for at afslutningsvis, kunne fastlægge den mest hensigtsmæssige metode \cite{UnifiedSpellCheck}.\\
+
+For at systemet kan interagere med brugerens stemme, er det helt fundamentalt, at systemet er dynamisk konstrueret. Denne dynamik, vil kunne udmøntes vidt forskelligt, og det derfor essentielt at undersøge de teoretiske principper, for herved at kunne løse den pågældende problemstilling bedst muligt. Når brugeren interagerer med systemet (afsnit 4.2.1), vil konverteringsprocessen være altafgørende for hvordan den færdigkonverterede tekststreng vil se ud. I tilfælde af, at brugeren har snakket utydeligt, skal systemet kunne håndterer dette på en dynamisk og ingeniøs måde. Dette er vigtigt, idet at systemet bør øge brugerens komfortabilitet, og mindske tidsforbruget. \\
+
+\subsubsection{Redigeringsafstand} % Martin & Jimmi. Edit distance.
+%Redigeret: Martin 14:46 15-12-2013 
+Redigeringsafstandsmetoden virker ved at sammenligne det skrevne ord med en indlæst database – hvorved en lighedsprocent udregnes. Denne lighedsprocent udregnes ved at anvende en algoritme, som tager udgangspunkt i det skrevne ord ($O_1$), og sammenligner med database-ordet ($O_2$). Her måles der på det totale antal bogstavs-indsætninger, sletninger eller erstatninger \cite{UnifiedSpellCheck}. \\\\
+Eksempel på redigeringsafstandsmetoden med en redigeringsafstand = 2. \\ $O_1$ : \textit{”Karvise”}, $O_2$ : \textit{”Jarvis”}
+\begin{enumerate}
+    \item \textit{”Karvise” $\rightarrow$ ”Jarvise”} (Erstatning af K $\rightarrow$ J)
+    \item \textit{”Jarvise” $\rightarrow$ ”Jarvis”} (Sletning af e $\rightarrow$ ””)
+\end{enumerate}
+
+I ovenstående eksempel udføres redigeringsafstandsmetoden gentagende gange, indtil der er er 100\% sammenligningsgrundlag mellem $O_1$ og $O_2$. Er der flere tilnærmelsesvise ord, vil de fremgå i en prioriteret rækkefølge, med højest lighedsprocent øverst, dvs. de ord med de færreste antal redigeringstrin.
+
+\subsubsection{Lignende nøgler} % Martin & Jimmi. Similarity keys
+Lignende-nøgle metoden blev grundlagt, idet at der var flere problemer associeret med fonetiske sætninger; derfor blev en algoritme udviklet, som hurtigt kunne finde de fonetiske fejl. Metoden gik i alt sin enkelthed ud på, at tildele alle ord og udtryk et digitalt signatur, som ikke måtte ødelægge de vigtigste træk i den fonetiske udtalelse af ordet. Der blev foruddefineret en række regler, som bestemte hvorledes konverteringsprocessen fra ord til talværdi skulle foregå \cite{UnifiedSpellCheck}.
+\clearpage
+
+Det første bogstav skulle gemmes, og de følgende bogstaver skulle konverteres efter nedenstående digitaliseringsprincipper: \\
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ l | l }
+        Digitaliseringkonv. & "Jarvis" \\
+        \hline \hline
+        A, E, I, O, U, H, W, Y $\rightarrow$ 0. & A, I \\
+        \hline
+        B, F, P, V $\rightarrow$ 1. & V \\
+        \hline 
+        C, G, J, K, Q, S, X, Z $\rightarrow$ 2. & S \\
+        \hline 
+        D, T $\rightarrow$ 3. & \\
+        \hline 
+        L $\rightarrow$ 4. & \\
+        \hline 
+        M, N $\rightarrow$ 5. & \\
+        \hline 
+        R $\rightarrow$ 6. & R \\
+        \hline 
+    \end{tabular}
+    \caption{\textit{Eksempel på lignende-nøgle metoden, med databaseordet: ”Jarvis”. \tabelgroup}}
+\end{table}
+
+"Jarvis" ville få tildelt følgende nøgle: J06102. Afslutningsvis elimineres alle 0’erne, og den tildelte nøgle vil derfor blive: J612.
+
+\subsubsection{Regelbaserede sandsynlighedsberegning} % Jimmi & Martin. Rule-based techniques
+Regelbaseret stavekorrektions-metoden anvender en algoritme, som beregner sandsynligheden for at ét forkert stavede ord, kan associeres med et eller flere omkringliggende ord. Metoden virker ved at sammenligne det skrevne ord, med en database for derved at kunne kortlægge fejlmønstre. Dette gøres ved at foranliggende såvel som de bagvedliggende ord undersøges i den kontekstuelle sammenhæng. For at kunne returnere det korrekte ord – afhænger denne korrektionsmetode i høj grad af, at databaserne har mange aktive brugere, hvorved gængse fejl og ordsammensætninger kan forefindes. \\\\
+Denne metode kunne i stemmestyrings produktsammenhæng anvendes til at lagre brugernes mønstre. Dette kunne være tvetydige udtalelser eller accenter, som systemet løbende ville kunne forebygge, ved at kigge på tidligere korrektioner. Dette er en løsning, som gør brug af elementære sandsynlighedsberegninger, og ville med tiden kunne forebygge en lang række fejlfortolkninger af systemet \cite{UnifiedSpellCheck}. 
+
+\subsubsection{Opsamling}
+Stavekontrolsteknologien er som beskrevet i ovenstående kapitel et avanceret værktøj. Metoderne har vidt forskellige indgangsvinkler, til hvordan en effektiv og intelligent stavekontrol kan konstrueres. Der har i årerenes løb været nødvendigt at skræddersy algoritmerne efter specifikke behov og ønsker – i bestræbelserne på, at kunne optimere algoritmernes eksekveringstid. Det har ledsaget til et utal af nye stavekontrols-algoritmer, som har underkategoriseret sig under de tre ovenstående metoder. \\\\
+For at kunne afgøre hvilken metode, som vil kunne kunne afdække gruppens behov, er følgende tabel blevet konstrueret: \\ 
+\begin{table}[h]
+    \begin{threeparttable}
+        \begin{tabular}{l|l}
+        \centering
+            Metode & Primær anvendelse \\ \hline \hline
+            \multirow{3}{*}{Redigeringsafstand} & Tager højde for manglende bogstaver, \\ 
+            & erstatninger samt sletninger. Desforuden \\ 
+            & er det den mest udviklede metode. \\ \hline
+            \multirow{2}{*}{Lignende nøgler} & Anvendes primært til at rette simple \\ 
+            & og enkelte ord, hvor ét bogstav er skrevet forkert. \\ \hline 
+            \multirow{2}{*}{Regelbaserede sandsynlighedsberegning} & Anvendes primært i morfologiske analyser\tnote{1} \\
+            & af kontekstuelle stavefejl. \\ \hline 
+        \end{tabular}
+        \begin{tablenotes}
+            \item[1] morfologi: \textit{formlære; læren om ordet og dets opbygning}\cite{DDOmorfologi}
+        \end{tablenotes}
+    \end{threeparttable}
+    \caption{\textit{Metodernes primære anvendelse. \tabelgroup}}
+\end{table} 
+
+I ovenstående tabel er de primære anvendelser blevet skitseret. Det er her væsentligt at bemærke, at den bedste løsning, ville være en hybrid løsning mellem afstandsredigerings-metoden og regelbaserede sandsynlighedsberegning, hvorved den fuldendte stavekontrolsfunktion ville kunne blive konstrueret. Af tidsbegrænsede årsager, har gruppen valgt at fokusere udelukkende på afstandsredigerings-metoden, idet at metodens faciliteter, vil kunne bidrage til en fuldt funktionel løsning. \\
+
+Hvordan denne kontrol skal foregå i en sekvens af tilstande, vil blive udspecificeret i næste afsnit (Afsnit \ref{sec:tilstandsmaskine}).

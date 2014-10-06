@@ -1,0 +1,31 @@
+%Sidst ændret af Søren kl 03:03
+
+\figurw{Figurer/floorplan.png}{Plantegning med møblering, relevante arealer og controllers med tilhørende ID - \figuregroup}{Floorplan}{1.0}
+
+På figur \ref{fig:Floorplan} ses et eksempel på en plantegning af et hus, hvor systemet kan integreres. Som nævnt i signaturforklaringen angiver de grønne prikker helt almindelige stikkontakter, de røde angintelligente stikkontakter mens de blå angiver et intelligent lampeudtag. Med intelligent menes, at disse kan styres centralt og har indbygget mikrofon til stemmestyring. %Yderligere info om denne kommer i afsnit \ref{sec:implementation}\\ NEJ - Implementation beskæftiger sig med real world :P
+\\
+
+I forbindelse med placeringen og antallet af stikkontakter, har der været flere ting som skulle overvejes. Først og fremmest angiver stærkstrømsbekendtgørelsens §801.53 \cite{staerkstroemsbekaendtgoerelse}, hvor mange stikkontakter der skal være i de forskellige rum - disse er selvfølgelig overholdt, da systemet nemt kunne tænkes at skulle bruges i forbindelse med nybyg. Derudover er der tænkt over placeringen i rummene, i forhold til teorien om at beregne, hvor en person befinder sig i rummet. De er derfor placeret diagonalt overfor hinanden, for at kunne måle, hvor lyden er højest. Samtidig er stikkontakterne placeret på den mest hensigtsmæssige måde, i forhold til, hvilke apparater der skal tilsluttes. Alle rum vil blive gennemgået en efter en, hvorved der argumenteres for de forskellige valg omkring antal og placering. \\
+
+{\bf Badeværelse}\\
+Den ene stikkontakt i badeværelset er placeret, da stærkstrømsbekendtgørelsen siger der skal være mindst én stikkontakt i badeværelser. Dette er en almindelig stikkontakt, idet alle apparater på et badeværelse ikke har brug for standby, da de bruges i den givne situation. For at opfylde behovet om en mikrofon til stemmestyring, er der placeret et intelligent lampeudtag med mikrofon, så der både er mulighed for at få lys, som kan styres alle steder fra, samt mulighed for at styre resten af huset fra badeværelset. \\
+
+{\bf Gang}\\
+I gangen er placeret almindelige stikkontakter for at overholde stærkstrømsbekendtgørelsen. Det intelligente lampeudtag med mikrofon gør det muligt at kunne sige \textit{"Sluk alle unødvendige apparater"} lige inden man forlader huset. En anden mulighed er, at få den til at tænde computeren, når man træder ind af døren.\\
+
+{\bf Stue}\\
+I stuen er der placeret et fjernsyn, med tilhørende surround sound. Disse er alle tilsluttet hver deres intelligente stikkontakt, og det vil derfor være ideelt at lave et scenarie, hvor tv'et og alle højttalere tænder ved hjælp af én kommando. Derudover er der placeret et lampeudtag over bordet for at kunne give lys. Mikrofonen i denne er dog ikke en nødvendighed, og det vil derfor være muligt at udskifte den, med kontakter til andre former for lamper i stedet. I stuen vil det også være muligt at beregne hvor en person befinder sig, men det der er dog ikke det store behov for dette i den nuværende opsætning. Den almindelige kontakt er placeret ifm. stærkstrømsbekendtgørelsen. \\
+
+{\bf Køkken}\\
+I køkkenet er placeret to lampeudtag for at kunne få lys over selve køkkenet samt spisebordet, som kan styres individuelt af hinanden. Der er derudover placeret to intelligente kontakter med mikrofon, som skal bruges til at finde ud af hvilken del af køkkenet lyset skal tændes i, hvis der eksempelvis bare blive sagt \textit{"Tænd lyset"}. Der vil ikke være behov for en mikrofon i lampeudtaget, da det er nok med mikrofonerne i de to kontakter.\\Det er også nødvendigt at have en almindelig stikkontakt - både pga. bekendtgørelsen, men også fordi der skal være mulighed for at tilslutte små køkkenapparater, som en håndmixer, uden at dette skal automatiseres. \\
+
+{\bf Soveværelse}\\
+Soveværelselsets vigtigste kontakter er her de to intelligente kontakter placeret ved siden af sengen, hvor natlamperne er sat til. Selvom disse ikke er placeret direkte overfor hinanden, er det stadig muligt at beregne, hvilken natlampe der skal slukkes afhængigt af hvilken side af sengen, lyden kommer fra. Samtidig kunne et scenarie med ordlyden \textit{"Jarvis Scenarie Godnat"}, slukke for begge lamper, hvor det ikke har betydning, hvor lyden kommer fra. Der er dog også en tredje intelligent stikkontakt, der er hensigtsmæssig i forhold til at kunne udbygge systemet. \\
+
+{\bf Kontor}\\
+Kontoret er det værelse i huset med mest individuelt elektronik, hvilket hænger naturligt sammen med en stor koncentration af intelligente stikkontakter. Alle enheder (computer, printer og tv) er fuldstændigt uafhængige, idet de har hver deres intelligente kontakt. Dette er mest hensigtsmæssigt da forbrugeren ikke nødvendigvis skal printe eller se tv når computeren tændes. Også her vil det selvfølgelig være muligt at have et scenarie der tænder/slukker det hele - eksempelvis når kontoret forlades. I dette rum er de intelligente stikkontakter placeret således at det ikke er muligt at beregne hvor personen befinder sig i rummet. Dette er heller ikke vigtigt, da der kun er én af hver ting. \\
+
+{\bf Børneværelser}\\
+I de to børneværelser er der placeret tre kontakter i alt. To intelligente og en enkelt almindelig jf. stærkstrømsbekendtgørelsen. De intelligente er placeret så fjernsynet og natlampen kan tilsluttes og derved styres central - netop fjernsyn har en vigtig betydning ifm. central styring, som omtales yderligere senere i rapporten. Derudover er der igen ingen grund til at kunne beregne brugeres position, da det er et relativt lille rum med få elektroniske apparater.\\
+\\
+Da den nødvendige teori er beskrevet og et boligscenarie er opsat, kan et implementeringsafsnit skrives.

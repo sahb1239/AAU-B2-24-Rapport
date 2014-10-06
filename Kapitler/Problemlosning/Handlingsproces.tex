@@ -1,0 +1,84 @@
+\label{sec:handlingsproces}
+%Skrevet af Mads.
+%Sidst rettet: 02-12-2013, 14:41, Jimmi
+%Sidst rettet: 04-12-2013, 14:49, Mads
+%Sidst rettet: 09-12-2013, 20:56, Mads
+%Sidst rettet: 10-12-2013, 01:55, Jimmi, Søren
+%Sidst rettet: 16-12-2013, 00:38, Mikkel
+I afsnittet handlingsproces fokuseres der på at skabe en softwareløsning som afspejler kravspecifikationen. Dette forklares ved hjælp af flowcharts som illustrerer systemets handling i forskellige dele af programmet. Teorien vil redegøre for interessanternes problemstillinger, som er forbundet med stemmestyring og styring af elektronik. Den forangående teori vil anvendes til at strukturere en proceshandlingsoversigt.\\
+
+Systemet får input fra brugeren i form af tale, dette input deler systemet op i flere bestanddele. Disse bestanddele er alle ord, som kan være udtalt forkert, men alligevel opfanges af systemet. Den rå data med eventuelle fejl, vil derfor gennemgå en stavekontrol, således at systemet kan finde ud af, hvad præcist brugeren mente.
+\figurw{Figurer/fig1.png}{Illustration af systemets gennemgang af input. Hele flowchartet kan ses på Bilag \ref{sec:bilcd}. \figuregroup}{fig1}{0.85}
+
+Hvis systemet kan afgøre sætningens betydning, med over 80\% sammenligninghed, vil systemet automatisk udføre handlingen. Hvis ikke, vil systemet gå tilbage til sin starttilstand, som vist på figur \ref{fig:fig2}, samt spørge om den af stavekontrollen fundne korrektion, var det som blev ment.
+Hvis kontrollen går igennem, vil den fortsætte med at læse kommandoen og prøve at finde ud af hvilken handling, systemet skal foretage sig. Grunden til at gruppen har valgt ikke at spørge brugeren, hvis sammenligningheden er over 80\% er, at der let kan komme forvrængning af stemmeinputtet, og derved ville systemet spørge meget ofte, hvis inputtet skulle passe 100\% med det forventede.
+\figurw{Figurer/fig2.png}{Systemets læsning af handling. Hele flowchartet kan ses på Bilag \ref{sec:bilcd}. \figuregroup}{fig2}{1.0}
+
+På Figur \ref{fig:fig3} ses det at systemet læser kommandoen og derved finder ud af hvilken handling den skal foretage sig. Dette gøres ved at opdele handlingerne i 2 overordnede kategorier, som kaldes scenarier og handling. Scenarier er et udtyk for en række af handlinger, hvor handling blot er et udtryk for én handling.
+\\
+Hvis de overordnede kategorier er et scenarie vil systemet finde controllernes \#id i databasefilen scenarie.txt, derefter vil de fundne controllers blive tændt/slukket og til sidst informere brugeren om at scenariet er fuldført.
+\figurw{Figurer/fig3.png}{Systemets handling ved Tænd-kommando. Hele flowchartet kan ses på Bilag \ref{sec:bilcd}. \figuregroup}{fig3}{0.3}
+Hvis den overordenede kategori derimod er en handling, er der 3 forskellige muligheder; “tænd, sluk, status” som har hver deres handlingsmønstre som ligner hinanden meget. Hvis man tager udgangspunkt i tænd-funktionen, fungerer denne ved at finde controllerens \#id og derefter tænde den. Dernæst vil systemet informere brugeren om, at den pågældende controller blev tændt.\\
+
+{\bf Prioritering}\\
+Problemstillingen for den almene familie kunne være at børnene har adgang til alle elementer i systemet, hvilket forældrene måske ikke ønsker. Derfor har gruppen valgt at lave prioritering af stemmer, hvor systemet derved går ind og måler på via en database som er særskilt fra de øvrige databaser.\\
+Prioritering fungerer som vist på figur \ref{fig:prioritet} 
+
+\figurw{Figurer/prioritet.png}{Systemet vist med prioritering \figuregroup}{prioritet}{1.0}
+
+Systemet er som vist på figur \ref{fig:prioritet} opdelt i 3 prioriteringsgrader: 1., 2., og 3. hvor 1 er højest og 3 lavest.
+1. prioritet er forbeholdt forældrene mens 2. prioritet er til børnene. Det vil sige at hvis forældrene siger til systemet at børnenes TV skal være slukket, så kan børnene ikke tænde det igen, da de har en lavere prioritet end forældrene.\\
+
+Den sidste prioritet er til gæster, som skal have laveste prioritet og hertil kun have få rettigheder, men nok til at kunne færdes i huset.\\
+%På samme måde som vist på figur \ref{fig:fig1} vil systemet opfange dette i en mikrofon, som den derefter sender videre til PC-Boksen, der derefter sammenligner den binære “tale” med databasen for derefter at udfører kommandoen. Muligvis ikke nødvendig
+
+%Dernæst har systemet en “rettigheds” database som den søger i som vist på fig. \ref{fig:rettigheder} 
+
+\figurw{Figurer/rettigheder.png}{Systemet vist med rettigheder. \figuregroup}{rettigheder}{1.0}
+Systemet med rettigheder vil fungere på følgende måde. Brugeren taler ud i rummet som illustreret på figur \ref{fig:rettigheder}. Dernæst opfanger mikrofonen det talte og en controller omsætter derefter dette til tekst. Teksten bliver herefter sendt videre til PC-boksen som søger efter personens prioritet og hvilken kommando der ønskes udført. Dette søger den efter i databasen med rettigheder som dernæst vender tilbage med et svar omkring hvilke rettigheder personen har. Hvis brugeren som taler ikke har rettigheder til at bruge denne kommando vil systemet give en fejlbesked gennem højtalerne.\\
+
+Hvis brugeren derimod har rettigheder til at benytte kommandoen, skal systemet på samme måde som vist på figur \ref{fig:fig1} søge i databasen for at finde ud af hvordan kommandoen skal udføres og derefter udføre kommandoen og informere brugeren om at kommandoen er udført.\\ 
+
+%Dette søger den efter i databasen med rettigheder som dernæst vender tilbage med et svar omkring hvilke rettigheder personen har. Hvis brugeren som taler ikke har rettigheder til at bruge denne kommando vil systemet sende en besked i gennem højtalerne hvor den f.eks. siger “Du har ikke rettigheder til at tænde lyset i garagen”.\\\\
+%Hvis forbrugerne derimod har rettigheder til at bruge kommandoen skal systemet på samme måde som vist på figur \ref{fig:fig1} søge i databasen omkring hvordan kommandoen skal udføres og derefter udfører kommandoen og informere brugeren om at kommandoen er udført.
+
+{\bf Beskrivelse i trin ved først opstart af det ønskede system}
+\begin{enumerate}
+
+    \item Konfigurering af rettigheder
+
+    \begin{itemize}
+        \item Hver person i huset konfigureres ift. rettigheder
+    \end{itemize}
+
+\end{enumerate}
+
+{\bf Beskrivelse i trin ved opstart af systemet}
+\begin{enumerate}
+    \item Synkroniserer med PC-Boksen.
+    
+    \begin{itemize}
+        \item Data omkring hvor mange enheder og hvor de er placeres indsættes i en database fil til voicecontrolleren.
+    \end{itemize}
+
+    \item Hentning af nyeste firmware og databasefiler.
+
+    
+\end{enumerate}
+
+
+{\bf Beskrivelse i trin efter første åbning af systemet}
+\begin{enumerate}
+    \item Brugeren sætter systemet til strøm.
+    \item Systemet starter op og tjekker at der er forbindelse til databaserne.
+    \item Systemet er nu aktivt og mikrofonerne lytter til samtaler og søger efter ordet “Jarvis” som er nøgleordet.
+    \item Brugerne siger, i forlængelse af “Jarvis”, en kommando, som skal komme inden for fem sekunder. 
+
+    \item Mikrofonen omsætter brugerens tale til binær kode, som bliver sendt videre til PC-Boksen.
+    \item PC-Boksen undersøger derefter om brugeren har rettigheder til at udføre denne kommando.
+        \begin{itemize}
+            \item Hvis brugeren har tilladelse vil kommandoen blive udført, og systemet informaerer brugeren om dette.
+            \item Hvis brugerne ikke har tilladelse, vil kommandoen ikke blive udført og brugeren informeres om at handlingen ikke er udført.
+        \end{itemize}
+    \item Systemet udfører kommandoen og opdaterer status på de relevante controllers.
+\end{enumerate}

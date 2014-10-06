@@ -1,0 +1,26 @@
+%Hardware
+%Skrevet af Lars 20-11-2013
+For at undersøge, om teknologien overhovedet kan lade sig gøre, er det væsentligt at undersøge, om stemmestyringencontrolleren kan integreres i Zensehome's komponenter. Der undersøges både for den tilgængelige plads på lampeudtaget samt den almindelige stikkontakt fra Zensehome. \\\\
+
+{\bf Lampeudtag}\\
+Hvis man tager udgangspunkt i eksempelvis Zensehomes løsning, skal der logisk nok strøm til en enhed for, at denne kan fungere. Det samme gælder for en mikrofon. I systemet er der allerede to steder, der har eksisterende muligheder for tilkobling til el-nettet, der potentielt kunne være relevante at kigge på i forbindelse med implementeringen af en mikrofon: I lampeudtaget og i stikkontakten.\\
+
+\figurw{Figurer/lampeudtag_lars.png}{Tegning af lampeudtag. \figuregroup}{Lampeudtag_Lars}{0.5}
+
+Ud fra figur \ref{fig:Lampeudtag_Zensehome} og \ref{fig:Lampeudtag_Lars} af lampeudtaget kan det ses, at der allerede er en overskydende mængde plads, som kan udnyttes til en implementering af en mikrofon. \\\\
+
+{\bf Stikkontakt}\\
+\figurw{Figurer/stikkontakt.png}{Stikkontakt. (Figuren er fra Zensehome)}{Stikkontakt}{0.5}
+
+Stikkontakten kunne også være relevant at tage udgangspunkt i, men ud fra figur \ref{fig:Stikkontakt} kan man se, at der ikke i de stikkontakter, firmaet Zensehome på nuværende tidspunkt har, er plads til flere komponenter. Dette ville kræve en ombygning af de nuværende stikkontakter, hvilket muligvis ikke ville være hensigtsmæssigt økonomisk.
+
+Umiddelbart ville lampeudtaget dermed være mest relevant at tage udgangspunkt i, hvis der ikke skulle laves en hel ekstern enhed til opfangelse af tale. Der er dog en hel del problemstillinger, der skal undersøges, før at der kunne findes frem til en konkret hardware-løsning:\\\\
+Hvilke komponenter skal benyttes ift. mikrofonen?\\
+Hvor stor skal mikrofonen være for, at den kan implementeres i et lampeudtag eller en stikkontakt og samtidigt opfange stemmer i et helt rum på x antal kvadratmeter?\\
+Skal der bruges mere end én mikrofon? I så fald, hvordan skal den/disse vinkles for at opfange tale mest effektivt?\\
+Hvor meget størm skal mikrofonen bruge? Skal der indsættes en transformator? Hvilke indflydelse ville potentielt øget strømforbrug have økonomisk?
+Hvis rummet er meget stort, hvordan kunne der hensigtsmæssigt bruges andet end lampeudtag? Skulle der laves eksterne enheder, der eksempelvis kombinerer mikrofon og bevægelsessensor?\\
+
+Da ovenstående problemstillinger nærmest kunne være en rapport i sig selv, har forfatterne valgt primært at tage udgangspunkt i de software-mæssige problemstillinger i stedet og finde en løsning på disse.
+
+%Hardware-mæssige afspekter: Hvordan skal der implementeres mikrofoner i lysudtag+stikkontakter, hvor skal de sidde. Kan mikrofonerne køre direkte over el-nettet, eller skal der en transformator implementeres?

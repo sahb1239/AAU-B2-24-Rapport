@@ -1,0 +1,196 @@
+% Bemærk ændret til at passe til processanalysen!!!
+
+\documentclass[a4paper,11pt]{report}    % report tilføjer chapter
+\usepackage{fourier}                    % Font
+\usepackage[utf8]{inputenc}             % Encoding
+\usepackage[danish]{babel}              % Dansk sprog
+\usepackage{a4}                         % A4 format
+\usepackage[margin=3.0cm]{geometry}     % Til at sætte margin
+\usepackage{fancyhdr}                   % pæn header og footer
+\usepackage{lastpage}                   % til at finde sidste side
+\usepackage{hyperref}                   % Referencer i PDF dokumentet og referencer til labels
+\usepackage{float}                      % Til at sætte figurer korrekt
+\usepackage{url}                        % Til at lave URL
+\usepackage[final,danish]{fixme}        % Fixme final/draft
+\usepackage{titlesec}                   % Til at ændre på størrelsen på sections
+\usepackage{xr}                         % Gør det muligt at cross referere i andre filer
+\usepackage{amsmath}                    % Matematik-ting
+\usepackage{mathtools}                  % Flere matematik-ting
+\usepackage{multirow}                   % Multirows i tabel
+\usepackage{threeparttable}             % Til fodnoter i tabeller
+\usepackage{listingsutf8}               % Til sourcecode highlight i utf8 format
+\usepackage{natbib}                     % Udvidelse af kilder
+\usepackage[toc,page]{appendix}         % Til bilag
+\usepackage{enumitem}
+
+\let\tnote\relax                        % Fjerner ctable konflikt men ødelægger potientielt noget andet
+
+\usepackage{graphicx}                   % Billeder
+\usepackage{pdfpages}                   % PDF sider
+\usepackage{color}                      % Farver
+
+% Dokument informationer
+\newcommand{\gruppen}{B2-24}
+\newcommand{\rapportnavn}{Automatisér dit hjem - Procesanalyse}
+\newcommand{\currentpage}{\thepage}     % nuværende side
+\newcommand{\numpages}{\pageref{LastPage}}% antal sider
+\newcommand{\sidetal}{Side {\currentpage} af {\numpages}} % side informationer
+\newcommand{\pagetitle}{\rightmark}     % nuværende sektion
+\newcommand{\gruppenummer}{B2-24}
+\newcommand{\figuregroup}{(Figuren er fremstillet af gruppen)}
+\newcommand{\tabelgroup}{(Tabellen er fremstillet af gruppen)}
+\newcommand{\authjem}{Automatiseret hjem}
+
+% Definerer titel osv.
+\title{\rapportnavn}
+\author{\gruppen}
+\date{December 2013}
+
+% Setup af header og footer
+\fancypagestyle{plain}{                 % plain er standard for kapitler
+    \fancyhead[RO]{Automatisér dit hjem}
+    \fancyhead[LO]{Procesanalyse}
+    \fancyfoot[CO]{\sidetal}
+}
+\pagestyle{plain}
+
+% Fjerner afstand mellem kapitel og sætter størrelsen på skriften - se evt. her: http://tex.stackexchange.com/questions/63390/how-to-decrease-spacing-before-chapter-title
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+% Skriftstørrelse på sections
+\titleformat*{\section}{\LARGE\bfseries}
+\titleformat*{\subsection}{\Large\bfseries}
+\titleformat*{\subsubsection}{\large\bfseries}
+\titleformat*{\paragraph}{\normalsize\bfseries}
+\titleformat*{\subparagraph}{\normalsize\bfseries}
+
+% Opretter subsubsubsection og subsubsubsubsection
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\subsubsubsubsection}[1]{\subparagraph{#1}\mbox{}\\}
+
+% Definerer antallet af overskrifter der har tal, samt antallet af overskrifter i indholdsfortegnelsen
+\setcounter{secnumdepth}{1}             % 5 Fix for paragraph er en overskrift
+\setcounter{tocdepth}{1}                % 5 Fix for paragraph er i indholdsfortegnelse
+
+% Indent til og fra
+\newcommand{\enableIndent}{\setlength\parindent{3pt}}
+\newcommand{\disableIndent}{\setlength\parindent{0pt}}
+\disableIndent
+
+\hyphenation{}                         % Orddeling
+
+% Ændrer indstillingerne for caption for figurer, tabeller og kodestykker - tilføjer bla. kusiv og gør typenavnet bold (eks. Figur 1.1: bliver fed)
+\usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
+
+% Danske bogstaver i kodefiler
+\lstset{literate=%
+    {æ}{{\ae}}1
+    {å}{{\aa}}1
+    {ø}{{\o}}1
+    {Æ}{{\AE}}1
+    {Å}{{\AA}}1
+    {Ø}{{\O}}1
+}
+
+% Source code farve
+\definecolor{gray95}{gray}{.95}
+
+% Source code
+\lstdefinestyle{sourceC}
+{ 
+	numbers=left,
+	numbersep=5pt,
+	stepnumber=1,
+	captionpos=b,
+	keywordstyle=\color[rgb]{0,0,1},
+	commentstyle=\color[rgb]{0.133,0.545,0.133},
+	stringstyle=\color[rgb]{0.627,0.126,0.941},
+	backgroundcolor=\color{gray95},
+	frame=lrtb,
+	framerule=0.5pt,
+	linewidth=1.00\textwidth,
+	tabsize=4,
+	numberbychapter=true,
+	basicstyle=\ttfamily\footnotesize,
+	language=C,
+	breaklines=true,
+	showstringspaces=false,
+	breakindent=20pt
+}
+
+% Source code tekster
+\renewcommand{\lstlistingname}{Kode}
+\renewcommand{\lstlistlistingname}{Koder}
+
+% Kildeliste
+\bibpunct[, ]{[}{]}{;}{n}{,}{,} 		% Definerer de 6 parametre ved Harvard henvisning (bl.a. parantestype og seperatortegn)
+%\bibliographystyle{Bibtex/Vancouver}    % Udseende af litteraturlisten
+\bibliographystyle{unsrtnat} %plainnat}            % Inkluderer bl.a. isbn numre
+
+% Oprettelse af links inde i pdf dokumentet
+\hypersetup{
+    pdftitle={\rapportnavn},
+    pdfauthor={\gruppen},
+    pdfsubject={\rapportnavn},
+    bookmarksnumbered=true,
+    bookmarksopen=false,
+    bookmarksopenlevel=1,
+    colorlinks=false,
+    pdfstartview=Fit,
+    pdfpagemode=UseOutlines,
+    pdfpagelayout=TwoPageRight,
+    pdfborder = {0 0 0}
+}
+
+\hbadness=10001          % Slår alle underfull badness warnings fra
+\hfuzz=5.002pt           % Slår de ligegyldige overfull warnings fra
+
+% FixMe
+% http://mirrors.dotsrc.org/ctan/macros/latex/contrib/fixme/fixme.pdf
+\newcommand{\fix}[1]{\fxnote{#1}}
+\newcommand{\dfix}[1]{\fxfatal{#1}}
+\renewcommand\fxdanishfatalname{Fejl}
+\renewcommand\fxdanishnotename{Note}
+\renewcommand{\fixme}[1]{\fix{Benyt ikke fixme}}
+
+% Figurer
+% Figur med standard størrelse
+\newcommand{\figur}[3]{
+		\begin{figure}[H] \centering \em
+			\includegraphics{#1}
+			\caption{#2}\label{fig:#3}
+		\end{figure} 
+}
+
+% Figur med mulighed for at vælge bredde
+\newcommand{\figurw}[4]{
+		\begin{figure}[H] \centering \em
+			\includegraphics[width=#4\textwidth]{#1}
+			\caption{#2}\label{fig:#3}
+		\end{figure} 
+}
+
+% Figur med størrelsen 1.0
+\newcommand{\figurf}[3]{
+		\begin{figure}[H] \centering \em
+			\includegraphics[width=1.0\textwidth]{#1}
+			\caption{#2}\label{fig:#3}
+		\end{figure} 
+}
+
+% Kode kommandoer
+% Indlæs alt C-kode i fil
+\newcommand{\kode}[3]{
+            \lstinputlisting[style=sourceC, language=C, caption={#2}, label={code:#3}]{#1}
+}
+
+% Indlæs alt C-kode mellem 2 linjenumre i fil
+\newcommand{\kodel}[5]{
+            \lstinputlisting[style=sourceC, language=C, firstline=#4, lastline=#5, caption={#2}, label={code:#3}]{#1}
+}
+
+%Processanalyse
+\renewcommand{\subsubsection}[1]{{\bf #1\\}}
+
+\input{commands.tex}                    % Kommandoer

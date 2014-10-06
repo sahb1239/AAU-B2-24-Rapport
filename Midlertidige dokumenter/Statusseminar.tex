@@ -1,0 +1,66 @@
+\input{preamble.tex}
+\begin{document}
+
+\fancyhead{} %Resetter fancyhead
+\fancyhead[RO]{\rapportnavn}
+\fancyhead[LO]{\pagetitle}
+\fancyhead[CO]{\gruppenummer}
+\fancyfoot{} % Resetter fancyfoot
+\fancyfoot[CO]{\sidetal}
+
+\listoffixmes
+\clearpage
+
+\title{\rapportnavn\\ Statusseminar}
+\author{\gruppenummer}
+\date{7. november 2013}
+
+\maketitle
+
+\section*{Forord}
+\input{Kapitler/Forord/Forord.tex}
+\section*{Læsevejledning}
+\input{Kapitler/Forord/LasevejledningStatusSeminar.tex}
+\clearpage
+
+\section*{Indholdsfortegnelse}
+\renewcommand*\contentsname{}
+\tableofcontents
+\clearpage
+
+\section{Indledning}
+\input{Kapitler/Indledning.tex}
+\clearpage
+
+\input{Kapitler/Problemanalyse/Index.tex}
+
+\section{Litteraturliste}
+\input{Kapitler/Literaturliste.tex}
+\clearpage
+
+\section{Figurliste}
+\listoffigures
+\clearpage
+
+\section{Bilag}
+\subsection{Spørgeskema}
+\label{sec:sporgeskema}
+\input{Kapitler/Bilag/Sporgeskema.tex}
+
+\subsection{Samarbejdsaftale}
+\label{sec:samarbejdsaftale}
+\includepdf[pages=-]{Kapitler/Bilag/gruppekontrakt.pdf}
+
+\subsection{Vejlederkontrakt}
+\label{sec:vejlederkontrakt}
+\includepdf[pages=-]{Kapitler/Bilag/Vejlederkontrakt.pdf}
+
+%Note: PDF'erne er indsat i nævnte rækkefølge
+%\ref{sec:sporgeskema}
+
+%\includepdf[pages=-]{Kapitler/Bilag/Sporgeskema/Alle.pdf}
+%\includepdf[pages=-]{Kapitler/Bilag/Sporgeskema/AutomatiseretHjem.pdf}
+%\includepdf[pages=-]{Kapitler/Bilag/Sporgeskema/Zensehome.pdf}
+%\includepdf[pages=-]{Kapitler/Bilag/Sporgeskema/IHC.pdf}
+
+\end{document}

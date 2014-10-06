@@ -1,0 +1,67 @@
+\subsection{Beskrivelse}
+\subsubsection{Programudvikling}
+Programudviklingen er en af de centrale dele i rapporten, pga. at studieretningen Software. Det blev valgt under problemanalysen at programmet skulle kunne simulere hvordan et automatiseret hus skulle kunne styres vha. stemmestyring. Programmet simulerer stemmestryingen vha. tekst, som indtastes i et kommandolinje vindue.\\
+
+\subsubsection{Supervisor}
+Til at lede projektet mht. til programmeringen blev der valgt en supervisor der havde det overordnede ansvar på at programmet blev lavet og var i høj kvalitet. Supervisoren skulle så sørge for at alle af gruppemedlemmerne fik tildelt opgaver, som skulle løses således at programmet kunne fremstilles.\\
+
+\subsubsection{Flowcharts}
+Til programmet blev der fremstillet en række flowcharts der viser hvordan programmet er bygget op. Disse flowcharts skal vise hvad der sker hvis en specifik handling bliver aktiv i programmet.\\
+
+\subsubsection{Versionskontrol}
+Til at holde styr på programkoden er der blevet benyttet versionskontrol der gemmer alle ændringer af koden. Det er dermed muligt at hvilke personer der har lavet specifikke ændringer.\\
+
+\subsubsection{Plantegninger}
+Til at demonstrere hvordan et rigtigt hjem er der lavet en demonstrations plantegning, hvor der er sat møbler og lignende ind sammen med controllers forsynet med deres unikke ID.
+
+\subsection{Analyse}
+\subsubsection{Programudvikling}
+Programmet fremstillet af gruppen har generelt været af udemærket kvalitet.\\
+
+Til projektet blev der valgt at arbejde efter designprincippet MVC (model view controller), som hjalp med at dele funktioner ind i mindre dele. Dette gav den positive fordel at det var lettere at have overblik over koden og dermed også lettere at vedligeholde/fejlfinde. Derudover blev principperne fra topdown programmering også benyttet til at fremstille simple funktioner.\\
+
+Der blev dog ikke valgt at blive skrevet automatiske tests, alt blev testet manuelt gennem input. Dette gjorde således at det var sværere at teste om en ny funktion ødelagde noget af det der havde virket før. Dette kunne have ført til problemer, hvis systemet så ud til at fungere men nogle få funktioner ikke virkede, som kunne få programmet til at bryde ned.\\
+
+\subsubsection{Supervisor}
+Supervisoren har gennem hele programudviklingen holdt det overordnede overblik over udviklingen. Supervisoren har dog ikke været god nok til at uddele opgaver på det rigtige niveau til forskellige personer. Supervisoren havde desuden samarbejdsvanskeligheder pga. ikke alle gruppemedlemmerne altid forstod den uddelegerede opgave. De personer der i forvejen kunne mest programmering, fik også stillet de fleste opgaver. Dette burde fordeles anderledes således at de personer der kunne mindst burde have lavet mest.\\
+
+Projektlederen forsøgte også at skynde programudviklingen igennem således at programmet hurtigere kunne blive færdigt. Projektlederen bevarede dog overblikket gennem hele forløbet med programudviklingen.\\
+
+\subsubsection{Flowcharts}
+Til at vise hvordan programmet skulle fungere blev der benyttet flowcharts. Programmet blev dog fremstillet før flowchartsne blev fremstillet. Flowchartsne ville potentielt have ledt til større overblik over projektet, og have bidraget til at udviklerne og projektlederen bedre kunne forstå af hinanden.\\
+
+\subsubsection{Versionskontrol}
+Til at holde styr på projektet blev Git vha. servicen Github benyttet, at have versionskontrol på projektet gjorde det meget lettere at synkonisere filer på tværs og automatisk sørge for at sætte 2 filer sammen som 2 personer havde ændret i. Derudover var det meget lettere at se hvilke ændringer der var blevet lavet, pga. logfiler gemmes over hvad der er ændret, hvornår der er ændret og hvad din personlige beskrivelse til ændringen er. Udover dette fungerede Githubs program til synkonisering, commit osv. ganske godt.\\
+
+Dog havde vi problemer med at hvis filen med koden var åben mens vi synkoniserede Github kunne den godt finde på at vise en gammel version af koden således at noget nyt kode blev overskrevet når der bliver gemt igen.\\
+
+Se screenshot af Github i figur \ref{fig:github} i bilaget.\\
+
+\subsubsection{Plantegninger}
+Planetegningen over et hus gav et rigtig godt overblik igennem hele processen med at programmere, da det var grafisk illustreret og nemt at se hvordan det bedst ville fungere i netop dette eksempel. Samtidig gav det også hele gruppen overblikket over programmets helhed, uden der skulle forklares alt for meget til den næste der skulle programmeres.
+
+\subsection{Fremadrettet}
+\subsubsection{Programudvikling}
+At arbejde ud fra designprincippet MVC kan anbefales til kommede projekter, problemet var her at nogle af gruppemedlemmerne ikke helt forstod hvad MVC indebar. Dog blev det lettere at fejlfinde og vedligeholde pga. den simple struktur funktionerne var bygget op af. MVC bliver specielt aktuelt når der skal begyndes på objekt orienteret programmering. Generelle principper om topdown programmering blev også benyttet til at dele funktionerne op i mindre funktioner og kan også anbefales.\\
+
+At vi ikke fik lavet automatiske tests var en ulempe pga. at det ville have været rart at have til hver gang der blev lavet en større ændring. På den måde ville man kunne se om testsne stadig virkede selvom at funktionen eksempelvis var omskrevet. Derfor er det af gruppens opfattelse at det ville være godt at have dette implementeret i et kommende projekt.\\
+
+\subsubsection{Supervisoren}
+Supervisoren strukturen fungerede overordnet godt og derfor er dette en ting der vil blive forsøgt indført i næste projekt. Supervisoren skal dog være bedre til at uddelegere opgaver og inkludere andre i projektet. Derudover skal der afsættes mere tid end 3 uger ellers skal alle af gruppemedlemmerne på projektet samtidig i modsætning, hvor vi i højere grad fokuserede på hold. Supervisoren skal på den øgede tid være bedre til at holde hovedet koldt.\\
+
+\subsubsection{Flowcharts}
+Flowcharts kan være en god ide at lave før selve programmet bliver fremstillet, da det ville kunne give et større overblik for alle gruppemedlemmerne og projektlederen. Dette ville muligvis være en fordel over for produktiviteten da opgaver meget lettere kan uddeles til gruppemedlemmer. Det ville dog have den store fordel at det kan forhindre misforståelser mellem projektlederen og gruppemedlemmerne.\\
+
+\subsubsection{Versionskontrol}
+Versionskontrol var et godt værktøj i forhold til at holde styr på koden, Git gjorde det meget nemmere at flere personer kunne arbejde på filerne af gangen, desuden benyttes logningen for at se hvad der var ændret. Versionstyring vil klart blive foretrækket til programmering.\\
+
+Hvilken type versionsstyring der bliver benyttet er der dog ikke taget nogle overvejelser over, da versionsstyring efter gruppen opfattelse generelt fungerer på samme måde, den eneste forskel er hvordan kommandolinje/brugerflade er bygget op.\\
+
+\subsubsection{Plantegninger}
+Eftersom det viste sig som en stor succes at have en grafisk oversigt, er dette noget der klart vil være en god idé at benytte sig af fremover. Det er dog vigtigt at huske på at de skal have relevans, og tiden ikke skal bruges på at lave irrelevante tegninger, men der skal vurderes om det vil kunne hjælpe. I forhold til en konkret plantegning over et hus, er det bedst fremover at fortsætte med de farverige og detaljerede plantegninger, da det er nemmere at visualisere sig dette fremover en almindelig plantegning, hvor der kun er markeret rum.
+
+
+
+
+
+

@@ -1,0 +1,40 @@
+% Herunder præsenteres vores slut produkt. Det program vi er nået frem til.
+Produkt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Stavekontrol} %Martin. Skal flyttes over i implementation sikkert.
+
+Som stavekontrol bruges redigeringsafstand metoden. Denne løsning er hovedsageligt baseret på Peter Norvigs (Chef af Googles forsknings afdeling) løsning.\cite{EditDistance}\\\\
+
+Følgende handlingsrækkefølge sker når stavekontrollen startes og et ord indføres. "Input" vil herefter referere til det i stavekontrollen indførte ord. 
+
+\begin{enumerate}
+  \item Input kontrolleres imod ord fra en database af mulige korrekte ord. Hvis input matcher en af disse ord vil stavekontrollen afslutte uden yderligere handlinger.
+  \item Hvis input ikke matcher et ord i databasen udføres følgende redigeringer af input (forklaret i teori):
+  \begin{enumerate}
+    \item Indsætning.
+    \item Sletning.
+    \item Erstatning.
+    \item Ombytning.
+  \end{enumerate}
+  \item Redigerings afstanden er nu en. bogstavskombinationerne kontrolleres imod ordene i databasen. Hvis der kommer udslag spørger programmet brugeren om det fundne ord var det han/hun mente. Hvis det var benyttes dette til at fuldføre kommandoen.
+  \item Hvis det ikke var fortsætter stavekontrollen med endnu en redigering, nu på de bogstavskombinationer som før blev fundet.
+  \item Redigerings afstanden er nu to. Samme procedure som ved første redigering sker. Hvis der ikke kommer udslag i sammenligningen af bogstavskombinationer og database ord informeres brugeren om at input ikke kunne forstås.
+\end{enumerate}
+
+Der udføres ikke flere redigeringer efter redigeringsafstand to da antallet af komputationer\mafix{cite til teori afgrænsning} for hvert ord bliver for store derefter.
+
+% Mulige underafsnit: Main, som skal indeholde vores main og forklare hvad denne gør. Input, hvor funktioner som håndterer input forklares, måske database herunder. Output: Output funktioner forklares. Test: Test af programmet.

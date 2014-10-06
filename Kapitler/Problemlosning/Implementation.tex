@@ -1,0 +1,383 @@
+% Søren  06/12-13 - 22:24
+%        14/12-13 - 04:00
+%        14/12-13 - 15:41
+%        15/12-13 - 03:22
+%        15/12-13 - 16:18
+% Mikkel 16/12-13 - 00:35
+%        16/12-13 - 13:18
+%        16/12-13 - 15:21 Korrektur
+Følgende afsnit omhandler hvordan programmet er implementeret. I afsnittet vil der blive givet praktiske eksempler på hvordan teorien er udnyttet til at skrive konkret programkode. Hele koden kan findes på den vedlagte CD i bilag \ref{sec:bilcd}. Kodeeksemplerne indsat i teksten er nogle steder forkortet, hvis noget er mindre relevant. Dette ses ved kommentaren /* ... */ i koden, som angiver at her er slettet noget.
+
+\subsection{Beskrivelse af programmet}\label{sec:impbeskr}
+Programmet er fremstillet som et konsolprogram. Programmet starter med at spørge efter input. Brugeren kan så indtaste noget tekst, som skal forestille at være det input programmet skal modtage fra en stemmegenkendelsesenhed. Input bliver derefter kørt igennem stavekontrollen. Hvis input efter stavekontrollen starter med jarvis vil programmet forsøge at udføre den angivne kommando efter ordet er udtalt. Hele programmet er opbygget omkring tanken at input er hvad en bruger skal sige, mens output er hvad systemet skal give af tilbagemelding i højttalerne. Et screenshot af programmet (kørt på en Mac) kan ses i figur \ref{fig:screenProgRunMac}.
+
+\figurw{Figurer/screenProgRunMac.png}{Screenshot af programmet kørt på en Mac computer \figuregroup}{screenProgRunMac}{1.0}
+
+I det angivne eksempel på programkørsel i figur \ref{fig:screenProgRunMac} kan det ses at det er muligt at tænde og slukke for forskellige kontakter. Derudover er det også muligt at udføre scenarier der har mulighed for at tænde og slukke flere forskellige enheder af gangen.\\
+
+Programmet indeholder også funktioner til at administrere huset, programmet har eksempelvis mulighed for at tilføje/slette controllere, scenarier og brugere.\\
+
+Følgende afsnit vil handle om hvordan programmet er implementeret. Derudover vil afsnittet lede over i test af programmet, der skal vise om programmet overholder kravsspecikationen.
+
+
+\subsection{Udarbejdelse af program}
+Funktionerne i programmet er opbygget efter designprincippet MVC (model, view, controller), der typisk benyttes i objektorienteret programmering. Modellen indeholder selve opdateringen af data, mens controlleren håndterer manipulationen af data. Viewet håndterer hvordan brugeren kommunikerer vha. programmets brugerflade med controlleren. Denne fremgangsmåde til at skabe funktioner er valgt, fordi det giver et godt hierarki over funktionerne. Programmerørene behøves heller ikke vide i deltaljer om hvordan alle funktioner virker, men kan nøjes med at udnytte nogle overordnede funktioner. \cite{MVC}\\
+
+Til programmet er der benyttet dynamisk lagerallokering flere steder. Hver gang der har været behov for et lagerområde, er det dog blevet vurderet om det blot kunne oprettes vha. en almindelig varibel. På den måde undgås det at programmet bliver alt for omfattende. \\
+
+Til at skrive æ, ø og å på Windows er det blevet valgt at bruge ae, oe og aa pga. Windows kan ifølge observationer ikke vise æ, ø og å ordentligt i UTF8 tegnsættet - dette er sandsynligvis fordi Windows benytter tegnsættet Windows-1252. Under stavekontrollen vil programmet rette æ, ø og å til ae, oe og aa. For at teste dette har gruppen fremstillet et lille program der indlæser fra en fil (encoded i UTF8) samt læser fra tastaturet. Eksempel på programkørslen på Windows kan ses i figur \ref{fig:danishinwin}.
+\figurw{Figurer/DanishWin.png}{Kørsel af æ, ø og å test på Windows \figuregroup}{danishinwin}{1.0}
+ 
+Mens en programkørsel på Mac vises i figur \ref{fig:danishinmac}. Programmet er også testet i Linux (Linux Mint) og programmet giver her samme resultat.
+\figurw{Figurer/DanishMac.png}{Kørsel af æ, ø og å test på Mac \figuregroup}{danishinmac}{1.0}
+
+Som det kan ses, fortolker Windows ikke tegnet som et æ som forventet, mens Mac/Linux udemærket kan fortolke tegnet i UTF8 tegnsættet.\\
+
+Programmet anvender dog æ, ø, å hvor det er muligt i funktioner der printer vha. følgende specielle \textit{definationer} til æ, ø og å. Definitionerne er nødvendige, da kodefilen er encoded i UTF8, mens compileren i Windows sandsynligvis fortolker det som Windows-1252 (se danish.h i bilag \ref{sec:bilcd}).
+
+\subsection{Controllers}
+For at kunne arbejde med at kunne tænde, slukke og udføre scenarier skal der først defineres en \textit{struct} til at indeholde informationerne om controllerene. I kode \ref{code:controllerdef} vises hvordan denne struct er defineret.
+
+\kode{Kode/Dele/controllerstruct.c}{Defination af strukturen der indeholder alle informationerne om controlleren}{controllerdef}
+
+Som det kan ses i kode \ref{code:controllerdef} indholder en controller følgende informationer:
+\begin{itemize}
+    \item int id: Indeholder hvilket ID der er bag den enkelte controller - benyttes til at scenarierne kan refere til et ID der skal ændres på, da rækkefølgen af controllerne kan ændres (hvis en controller bliver slettet). Derudover kan dette ID nummer også bruges til integration med Zensehome (se afsnit \ref{sec:zensehome})
+    \item int status: Indholder nuværende status (tændt/slukket)
+    \item char unit[UNIT\_NAME\_LEN]: Indeholder det brugerdefinerede navn på controlleren
+    \item char position[POSITION\_NAME\_LEN]: Indeholder informationerne om positionen på controlleren (f.eks. stuen, kontoret eller lignende)
+\end{itemize}
+
+
+\subsubsection*{Model}
+Controllerne bliver indlæst fra en fil under opstart af programmet. Denne funktion kaldes readControllers. Funktionen starter med at indlæse filen og benytter fscanf til at scanne hele filen indtil den når EOF\footnote{EOF: End of file}. Funktionen returnerer, hvis alt forløb vellykket, antallet af elementer indlæst (true - værdier ikke lig 0). Hvis filen ikke kan indlæses returneres 0 (false). Funktionen vises i kode \ref{code:readControllers}.
+
+\kode{Kode/Dele/controllerreadcontrollers.c}{Indlæsning af controllerne fra fil}{readControllers}
+
+Da programmet også skal kunne oprette nye controllers og ændre status på disse er der behov for at have en funktion der kan opdatere filen med alle controllere. Denne funktion kaldes saveControllers. Funktionen overskriver filen med controllerne indlæst vha. funktionen fprintf. Funktionen vises i kode \ref{code:saveControllers}
+
+\kode{Kode/Dele/controllersavecontrollers.c}{Opdatering af controllerne til fil}{saveControllers}
+
+Som det fremgår af koden, modtager funktionen 2 inputvariabler og returnerer en int værdi. Den første inputvariabel (const CONTROLLERS controllers[]) modtager de controllers der skal skrives til filen. Den anden inputvariabel (int len) modtager antallet af elementer i inputvariablen controllers. Funktionen returnerer 1 hvis alt var vellykket (true) mens funktionen returnerer 0 hvis filen ikke kunne indlæses (false).
+
+\subsubsection*{Controller}\label{sec:impl_controller}
+Oprettelse af controllers sker i funktionen addControllerC. Funktionen tager som input det indlæste array af controllere, den nye controller der skal tilføjes samt længden af det nuværende indlæste array af controllers. Funktionen overfører værdierne fra den controller, der skal tilføjes over i det indlæste array af controllers. Værdierne id og status bliver overført til structen i det indlæste array vha. assignments. String-værdierne bliver overført vha. strcpy. Til slut bliver saveControllers kaldt. Funktionen vises i kode \ref{code:addControllerC}.
+
+\kode{Kode/Dele/controlleraddcontrollerc.c}{Oprettelse af controller i array og skriv til fil}{addControllerC}
+
+Sletning af controllere sker i funktionen removeControllerC. Funktionen opdaterer det indlæste array af controllere til at indeholde alle controllere uden det slettede. Dette gør den vha. en for-løkke, der rykker elementerne efter det angivne index, i input parametrene, en plads tilbage. Dernæst gemmes vha. funktionen saveControllers. Output fra funktionen saveControllers bliver returneret. Funktionen vises i kode \ref{code:removeControllersC}.
+
+\kode{Kode/Dele/controllerremovecontrollerc.c}{Slettelse af controller i array og skriv til fil}{removeControllersC}
+
+For at kunne finde ud af hvilket index en given controller ligger i arrayet, er der lavet 2 funktioner til dette formål. Den ene funktion finder index ud fra navn og rumnavn - denne funktion benyttes i kommandoudførslen. Den anden funktion finder index ud fra controller-id. Dette bliver brugt under udførslen af scenarier, fordi scenarier refererer til controllerens ID. Begge funktioner er lavet vha. en for-løkke der, returnerer når der er fundet et match. Hvis alle elementer bliver løbet igennem er der ikke fundet et match og der returneres derfor -1. Funktionen vises i kode \ref{code:findControllers}.
+
+\kode{Kode/Dele/controllerfindcontroller.c}{Søgning efter controller efter navn og placering eller id}{findControllers}
+
+
+\subsubsection*{View}
+Til at printe ud på skærmen er der lavet 2 funktioner. Den ene funktion udskriver status for en controller ud fra et index. Den anden udskriver alle controllers' status vha. en for-løkke.
+
+\kode{Kode/Dele/controllerstatus.c}{Print funktioner til controlleren}{controlprintfunc}
+
+Til at læse input til oprettelse/slettelse af en controller er en funktion, som ses i kode \ref{code:controlreadinput}, blevet konstrueret.
+
+\kode{Kode/Dele/controllerreadinput.c}{Læsning af input om controller}{controlreadinput}
+
+For oprettelse og sletning af en controller er følgende funktioner i kode \ref{code:addremovecontrollerview} blevet skrevet. Begge funktioner spørger først efter input vha. funktionen vist i kode \ref{code:controlreadinput}, dernæst vil funktionen forsøge at kalde den relevante funktion og returnerer outputtet, vist i kode \ref{code:addControllerC}, for at oprette controlleren. Funktionen til sletning vil derimod først forsøge at finde index ud fra et navn og en placering, som vist i kode \ref{code:findControllers}. Hvis controlleren kunne findes, vil funktionen udføre og returnere output fra funktionen vist i kode \ref{code:removeControllersC}. Begge funktioner vises i kode \ref{code:addremovecontrollerview}
+
+\kode{Kode/Dele/controlleraddremove.c}{Oprettelse og sletning af controller ud fra brugerinput}{addremovecontrollerview}
+
+For at håndtere skift i status på controlleren, er der lavet en specifik funktion. Den forventer at modtage arrayet af controllers, længden af arrayet, index på controlleren der skal ændres samt hvilken status den skal ændres til. Funktionen sætter vha. et almindeligt assignment værdien af controlleren til at være den nye status og printer derefter status ud på controlleren og gemmer. Funktionen vises i kode \ref{code:changeControllerState}
+
+\kode{Kode/Dele/controllerchangecontrollerstate.c}{Skift af status på controller}{changeControllerState}
+
+
+\subsubsection*{Opsamling}
+Alle funktionerne nævnt i dette afsnit bliver brugt i programmet. Her er et kort overblik over, hvad hver funktion håndterer:
+\begin{itemize}
+    \item readControllers: Indlæser controllerne fra en fil
+    \item saveControllers: Gemmer controllerne til en fil
+    \item addControllerC: Oprettelse af en controller
+    \item removeControllerC: Sletning af en controller
+    \item findControllerFromName: Finder en controller ud fra navn og placering
+    \item findControllerFromId: Finder en controller ud fra id
+    \item addController: Oprettelse af en controller og spørger efter input til formålet
+    \item removeController: Sletning af en controller og spørger efter input til formålet
+    \item changeControllerState: Ændring af status på controller
+    \item readInputController: Indlæser navn og placering ud fra input fra tastaturet
+    \item statusControllerPrint: Udprint af status fra en enkelt controller
+    \item statusControllerPrintAll: Udprint af status fra alle controllere
+\end{itemize}
+
+Programmet indeholder også scenarier der har mulighed for at tænde og slukke for flere controllere af gangen. Disse gennemgås i afsnit \ref{sec:implemscen}.
+
+
+\subsection{Scenarie}\label{sec:implemscen}
+Scenarier er nogle handlinger der kan tænde/slukke for flere controllere af gangen. Formålet ved disse er f.eks. at kunne bede huset om at gøre klar til at se film i stuen. Dermed skal alt unødvendigt lys slukke, mens fjernsynet, lydanlægget og dvd afspilleren skal tændes. På denne måde slipper brugeren for at skulle tænde/slukke alle ting separat. For at indeholde informationerne omkring et scenarie er der blevet defineret en struct. Definitionen kan ses i kode \ref{code:scenariestruct}.
+
+\kode{Kode/Dele/scenariestruct.c}{Strukturen der indeholder informationer om et scenarie}{scenariestruct}
+
+Som det kan ses i kode \ref{code:scenariestruct} indeholder et scenarie følgende informationer
+\begin{itemize}
+    \item int num: Indeholder nummeret på scenariet (hvert scenarie har et unikt nummer)
+    \item int allow\_p1, allow\_p2, allow\_p3: Værdier der repræsenterer om permission 1, 2 eller 3 må have adgang til at bruge scenariet
+    \item int c1\_id, c2\_id, c3\_id: Indeholder ID på den controller der skal ændres status på
+    \item int c1\_state, c2\_state, c3\_state: Indeholder den status der skal ændres til
+\end{itemize}
+
+Funktionerne til scenarierne er meget lignende funktionerne til controllerne, derfor vil alle kodestykkerne i det nedstående ikke blive gennemgået i detaljer.
+
+\subsubsection*{Model}
+Til at indlæse og gemme scenarierne er der lavet 2 funktioner til formålet. Disse hedder readScenarie og saveScenarie. Disse 2 funktioner fungerer på samme måde som funktionerne til læsning og skrivning for controllerne. Se kode \ref{code:readControllers} og \ref{code:saveControllers}. Koden for læsning af scenarie og skrivning af scenarier kan findes i bilag \ref{sec:bilcd}.
+
+\subsubsection*{Controller}
+Til oprettelse/slettelse af scenarier er der lavet 2 funktioner. Disse hedder addScenarieC samt removeScenarieC. Opbygningen er den samme som de 2 andre funktioner der bliver benyttet i controlleren se kode \ref{code:addControllerC} og \ref{code:removeControllersC}. Koden til de 2 funktioner kan findes i bilag \ref{sec:bilcd}.\\
+
+Til at finde et specifik scenarie-index er der lavet en funktion, der finder dette ud fra navnet kaldet findScenarieFromName, funktionen fungerer på samme måde som funktionerne til at finde id/index for controllerne - kode \ref{code:findControllers}. Koden kan findes i bilag \ref{sec:bilcd}.
+
+\subsubsection*{View}
+Programmet indeholder en funktion kaldet printAllScenarier til print af alle indlæste scenarier.\\
+
+Til læsning af input er der 2 funktioner: readInputScenarie som er beregnet til input ved oprettelse af nyt scenarie, mens removeScenarieInput er beregnet til input ved sletning af et scenarie. Begge funktioner fungerer vha. \textit{scanf} og \textit{printf} kald. Se bilag \ref{sec:bilcd} for koden.\\
+
+Til oprettelse og sletning af scenarier er der også 2 funktioner kaldet addScenarie og removeScenarie, som håndterer brugerinput og så tilføjer/sletter ud fra det angivne brugerinput. Funktionerne kan ses i bilag \ref{sec:bilcd}\\
+
+Udførsel af et scenarie sker i funktionen runScenarie. Denne funktion tager som input, et scenarie der skal udføres, det indlæste controller-array, længden af arrayet samt nuværende bruger. Funktionen starter med at tjekke om den angivne bruger har tilladelse til at benytte scenariet - dette bliver gjort vha. en swich-case som kigger på prioriteten på den nuværende bruger og tjekker så hvilken brugerrettighed scenariet påkræver. Hvis en højere rettighed kræves, vil funktionen returnere 0. Hvis brugerrettighedne blev godkendt, vil funktionen se på om c1\_id er lig 0. Hvis den er lig 0 vil funktionen tænde/slukke alle controllere alt efter hvilken status c1\_state er sat til. Hvis c1\_id derimod ikke er lig med 0, vil funktionen udføre ændringerne på de 3 controllere der er valgt. Se kode \ref{code:runscenarie}
+
+\kode{Kode/Dele/scenarierunscenarie.c}{Kørsel af et scenarie}{runscenarie}
+
+
+\subsubsection*{Opsamling}
+Følgende funktioner benyttes til at styre scenarier:
+\begin{itemize}
+    \item readScenarie: Indlæser scenarier fra en fil
+    \item saveScenarier: Gemmer de indlæste scenarier til en fil
+    \item addScenarieC: Håndterer oprettelsen af et scenarie
+    \item removeScenarieC: Håndterer sletningen af et scenarie
+    \item findScenarieFromName: Finder index på et scenarie i arrayet
+    \item addScenarie: Oprettelse af et scenarie og indlæsning af input til dette
+    \item removeScenarie: Sletning af et scenarie og indlæsning af input til dette
+    \item readInputScenarie: Indlæser input til oprettelse af et nyt scenarie
+    \item removeScenarieInput: Indlæser input til sletning af et scenarie
+    \item printAllScenarier: Printer alle scenarier
+\end{itemize}
+
+Programmet er også afhængelig af at kunne benytte brugere, som gennemgås i afnit \ref{sec:implemusers}
+
+\subsection{Brugere}\label{sec:implemusers} %Mikkel 14/12/13
+En vigtig del af systemet er muligheden for at kunne lave forskellige rettigheder i forhold til hvilken person der betjener systemet, som forklaret i afsnit \ref{sec:handlingsproces}. Det er programmeret således at man \"logger ind\" ved åbning af programmet, så systemet ved hvilken prioritet man har, som efterfølgende tjekkes hver gang der prøves at køre en scenarie. Brugerne er i programmet gemt i et struct kaldet USERS, som det ses i kode \ref{code:structusers}.
+
+\kode{Kode/Dele/users_struct.c}{Struct til brugere}{structusers}
+
+
+\begin{itemize}
+    \item int priority: Denne kan antage værdier 1-3 afhængig af om man har første, anden eller tredje prioritet
+    \item char name[80]: Denne tekststreng indeholder navnet på brugeren som indtastes når brugeren angives
+\end{itemize}
+
+\subsubsection*{Model}
+Indlæsning og lagring af brugere, fungerer på samme måde som tidligere beskrevet i afsnit \ref{sec:impl_controller} og \ref{sec:implemscen} omhandlende controllers og scenarier. Dette vil derfor ikke blive beskrevet yderligere, men kan ses i bilag \ref{sec:bilcd}. 
+
+\subsubsection*{Controller}
+Til at tilføje og fjerne brugere, bruges funktionerne removeUserC og addUserC der fungerer på samme måde som de lignende funktioner for controllers og scenarier.
+
+\subsubsection*{View}\label{sec:users_view}
+
+Brugerinputtet modtages først og fremmest ved hjælp af addUser og removeUser, som bruges til at kalde en funktion, der beder om brugerinput for derefter at give dette input til funktionerne, som fjerner eller tilføjer brugerne. Funktionen til at modtage brugerinput hedder readInputUser og kan ses i kode \ref{code:readinputuser}
+
+\kode{Kode/Dele/users_readinput.c}{Indlæsning af brugerinput ved sletning/tilføjelse af brugere}{readinputuser}
+
+Funktionen modtager følgende tre input:
+\begin{itemize}
+    \item char name[]: Navnet fra brugerinput føres over i denne pointer til en tekststreng
+    \item int askPriority: Dette tal, som kan være 0 eller 1, angiver om der skal spørges om prioritet. Grunden til dette er at det kun er relevant i forbindelse med tilføjelse af bruger
+    \item int *priority: Der vil kun blive spurgt om dette hvis int askPriority er lig med 1. På grund af måden C er bygget op på\footnote{Antallet af formelle og aktuelle parametre skal stemme overens}, er det dog stadig nødvendigt at sende en pointer til en int med i funktionskaldet.
+\end{itemize}
+
+Det primære formål med at lave funktionen readInputUser er altså, at den skal være generel på den måde, at den kan bruges til både sletning, tilføjelse og skift af brugere.\\
+
+Netop skift af bruger er en vigtig del af programmet. I kode \ref{code:selectuser} ses funktionen, selectUser, som håndterer dette. Funktionen bliver kaldt når programmet starter, men kan også kaldes med kommandoen \"Jarvis bruger\". 
+
+\kode{Kode/Dele/users_select.c}{Funktion til at vælge bruger}{selectuser}
+
+
+Det første der sker i funktionen er en deklaration af en midlertidig struct-variabel, som der sendes en pointer til i funktionskaldet af readInputUser (kode \ref{code:readinputuser}). Derefter sammenlignes navnet fra brugerinputtet med alle brugere ved hjælp af strcmpI\footnote{Case insensitive version af strcmp (Lavet af gruppen)}. Hvis disse er lig med hinanden, kopieres navnet ind i currentUser.name vha. strcpy, mens currentUser.priority assignes til prioriteten, der begge blev sendt som call-by-reference, da det ikke er nok at have denne som en lokal variabel, da den skal bruges hver gang et scenarie skal køres.\\
+
+Udover dette findes der også en funktion til at udskrive alle brugere samt deres prioritet. Denne hedder printUsers og kan ses i kode \ref{code:printusers}
+
+\kodel{Kode/Dele/users_print.c}{Funktion til at printe brugere og deres prioritet}{printusers}{1}{8}
+
+Funktionen udskriver først overskrifter, som bliver adskilt ved hjælp af tabulator. Dernæst er der en \textit{counter-controlled loop} i form af en for-løkke, der udskriver prioritet og navn i index fra 0 til længden af array'et af structs.
+
+\subsubsection*{Opsamling}
+For at styre brugersystemet benyttes disse funktioner
+\begin{itemize}
+    \item selectUser: Håndterer hvem dem nuværende bruger er
+    \item readUsers: Indlæser brugere fra en fil
+    \item saveUsers: Gemmer brugerne til en fil
+    \item addUserC: Håndterer oprettelsen af en bruger
+    \item removeUserC: Håndterer sletningen af en bruger
+    \item addUser: Oprettelse af en bruger og indlæsning af input til dette
+    \item removeUser: Slettelse af en bruger og indlæsning af input til dette
+    \item readInputUser: Indlæser input til oprettelse af en ny bruger
+    \item printUsers: Printer alle brugere
+\end{itemize}
+
+\subsection{Databaser} % Mikkel 16-12-13 01:05
+Igennem hele programmet bliver der brugt mange databaser. Disse er lavet i form af en tekstfil af typen .txt, som systemet importerer fra og eksporterer til i løbet af kørslen. Formålet med disse vil kort, men præcist, blive forklaret i tabel \ref{tab:databases}
+
+\begin{table}[h]
+    \centering
+    \begin{threeparttable}
+        \begin{tabular}{ p{3cm}|p{11cm} }
+            Navn & Beskrivelse \\ \hline \hline
+            \multirow{1}{*}{controllers.txt} & Indeholder alle controllers i form af ID, navn og position \\ \hline
+            \multirow{2}{*}{ord.txt} & Indeholder alle ord (stavet korrekt) der kan bruges i programmet så stavekontrollen kan fungere \\ \hline 
+            \multirow{2}{*}{scenarier.txt} & Indeholder scenariets nummer, rettigheder for de tre prioriteter, om controlleren skal tændes eller slukkes, controllens id og scenariets navn \\ \hline
+            \multirow{1}{*}{users.txt} & Indeholder brugerens prioritet samt navn \\ \hline
+        \end{tabular}
+    \end{threeparttable}
+    \caption{\textit{Databaser der bruges i programmet. \tabelgroup}}
+    \label{tab:databases}
+\end{table} 
+
+Efter denne detaljerede gennemgang af de forskellige elementer i programmet, er der nu en tilpas dybdegående viden til at gennemgå hvordan programmet fungerer i en helhed.
+
+\subsection{Programmets handling}\label{sec:implemprogramaction}
+
+Dette afsnit vil komme ind på handlingsprocessen i programudførslen. Der vil gennemgået hvilken rækkefølge ting eksekveres i programmet, samt hvordan de bliver eksekveret.\\
+En kort beskrivelse af programmet kan findes i afsnit \ref{sec:impbeskr}.\\
+
+Programmet starter med at deklarere variablerne til arrays til som indeholder data. Derefter bliver de indlæst i variablerne. Efterfølgende bliver kommandolinjeargumenterne undersøgt for genkendte kommandoer. Efter alle kommandolinjeargumenter er kørt igennem, går programmet ind i en uendelig while-løkke. Løkken er uendelig da betingelsen er 1 (true). I while løkken vil der blive spurgt ind til brugerinput - her benyttes scanf til indlæsning af inputtet.
+
+\kode{Kode/Dele/mainassaigments.c}{Definering af variabler samt læsning af data}{voicemainreaddata}
+
+Efter inputtet er indlæst, bliver input delt op i ord vha. funktionen splitString. Dernæst udføres stavekontrol på hvert ord og lighedsgraden udregnes. Efter denne proces, leder systemet efter ordet "jarvis". Hvis "jarvis" kunne findes, vil systemet sætte en pointer til at pege på det første ord efter "jarvis" og opdatere længden af ord. Denne pointer bliver i dette afsnit betegnet for input.
+
+\kode{Kode/Dele/mainreadinputandcorrect.c}{Indlæsning af input samt opdeling af ord vha. funktionen splitString og kørsel af stavekontrol}{voicemainreadinput}
+
+Hvis pointeren til første forekomst af "jarvis" blev fundet, vil systemet forsøge at udføre stavekontrollen på hvert ord igen. Systemet vil dog afbryde udførelsen af kommandoen, hvis der ikke kunne findes et match til ordet.
+
+\kode{Kode/Dele/maincheckjarvis.c}{Finder første ord lig "jarvis" samt udførsel af stavekontrol igen}{voicemainfindjarvis}
+
+Hvis systemet ikke afbryder udførelsen af kommandoen, vil programmet dernæst tjekke om lighedsgraden mellem det skrevne og det tilrettede er under 80\%. Hvis dette er tilfældet, vil programmet spørge brugeren om det tilrettede input, var det brugeren mente vha. ja/nej input (mulighed for at bruge j/n, y/n, ja/nej eller yes/no).
+
+\kode{Kode/Dele/mainchecklikeness.c}{Tjek af lighedsgrad og input i tilfælde af lille lighedsgrad}{voicemaincheck}
+
+Hvis enten brugeren sagde ja til det rettede input eller lighedsgraden er 80\% eller derover, vil systemet dernæst forsøge at udføre kommandoen. Hvis kommandoen ikke kunne udføres, eller en af tjekkene slog fejl, vil der blive printet en fejlmeddelelse.
+
+\kode{Kode/Dele/mainexeccommand.c}{Udførsel af kommando}{voicemainexeccommand}
+
+Udførelsen af kommandoen vil blive forklaret i detaljer i afsnit \ref{sec:implemexeccmd}.
+
+
+\subsubsection{Udførsel af kommando}\label{sec:implemexeccmd}
+Udførelsen af kommandoer er en af de vigtigste funktioner i selve programmet. Men før udførelsen af selve kommandoen er det nødvendigt at vide hvilken kommando der skal udføres. Til dette formål er der blevet konstrueret en for-løkke der gennemgår alle ord i input. Alle ord bliver tjekket igennem for forskellige keywords, som definerer handlingen så som "tænd", "sluk" eller "status". Denne information bliver lagret i en variabel kaldet type. I for-løkken søges der desuden efter navne på controllere og navne på steder i huset. Der er her mulighed for at indtaste flere controllere der ønskes status på. Dog er stedet i huset ikke et array, som derfor sætter begrænsning på at handlingen kun kan foretages i ét rum. Se kode \ref{code:execfindcmd}
+
+\kode{Kode/Dele/execfindcmd.c}{Finder alle argumenter i input kommandoen}{execfindcmd}
+
+For hver controller- eller scenariefunktion fundet, vil programmet tælle antallet af handlinger det skal udføres en op. Efter analyseringen af input, skal fortolkningen udføres. Her ses først på typen af handling der skal udføres. Hvis handlingen er en handling der direkte interegerer med systemet, f.eks. sluk/tænd/status på kontakter, eller sluk/tænd for scenarie vil programmet køre en for-løkke, der løber op til antallet af handlinger der skal udføres. I for løkken vil alle delhandlinger så udføres.\\
+
+Hvis der derimod skal udføres en kommando, som f.eks. tilføjelse/fjernelse af ny kontroller/scenarie eller status på alt, udføres det i en switch-case. Funktionen returnerer så 1 (true) når en kommando er udført. Se koden for begge funktioner i bilag \ref{sec:bilcd}.\\
+
+Det kan ses i kode \ref{code:execselectcommandexec} hvordan der bliver valgt mellem de 2 funktioner.
+
+\kode{Kode/Dele/execselectcommandexec.c}{Valg af type kommando ud fra om der er fundet controllere og scenarier i input}{execselectcommandexec}
+
+
+\subsubsection*{Opsamling}
+Nogle af programmets vigtigste elementer i det fremstillede program er indlæsning af input, udførsel af stavekontrol, led efter ordet "jarvis", tjek at lighedsgraden er tilpas høj, forståelse af kommando samt udførsel af kommando. Udførslen af disse funktioner kan beskrives som en tilstandsmaskine. Afsnit \ref{sec:implemtilstandsmaskine} vil belyse dette nærmere.
+
+\subsection{Inddragelse af teori}
+\subsubsection{Tilstandsmaskiner}\label{sec:implemtilstandsmaskine}
+Programmet fremstillet benytter teorien bag tilstandsmaskiner. Programmets overordnede vigtigste tilstande fra afsnittet \ref{sec:implemprogramaction} kan simplificeres til følgende tilstande:
+\begin{itemize}
+    \item Indlæsning af input (kode \ref{code:voicemainreadinput})
+    \item Stavekontrol (afsnit \ref{sec:stavekontrol})
+    \begin{itemize}
+        \item Input i tilfælde af at ligheden er tilpas lille
+    \end{itemize}
+    \item Handling (afsnit \ref{sec:implemexeccmd})
+\end{itemize}
+En grafisk illustration af tilstandende kan ses i figur \ref{fig:implemtilstand}. Figuren starter i indlæsning af input og gå derfra til stavekontrol, hvis stavekontrollen fejler startes forfra. Hvis lighedsgraden er tilpas høj, bliver der gået direkte til tilstanden handling, men hvis lighedsgraden er mindre vil programmet spørge om det tilrettede input, var det brugeren mente. Hvis dette var tilfældet, skiftes tilstand til handling. Hvis ikke det rettede input var det brugren mente, skiftes tilstand til indlæsning af input. I tilstanden handling vil handlingen udføres og dernæst skiftes tilstand til indlæsning af input.
+
+\figurw{Figurer/tilstandsmaskine-implementering.png}{Simplificeret tilstandsdiagram \figuregroup}{implemtilstand}{1.0}
+
+\subsubsection{Stavekontrol}\label{sec:impl-stavekontrol}
+I programmet benyttes stavekontrol til at kunne forstå input, selvom brugeren har stavet forkert f.eks. pga. at tale til tekst genkendelsen er upræcis. Programmet benytter eksempelvis automatisk retning til at rette "kontoret" til "kontor", da controller databasen kun registrerer navnet på placeringen i ubestemt form.\\
+
+Til stavekontrollen er metoden "redigeringsafstand" blevet valgt. Redigeringsafstanden er i koden 2. For at udnytte metoden redigeringsafstand skal en database med alle kendte ord først indlæses. I dette projekt er det blevet valgt ikke at have prioriteter på ordene i forhold til hvor ofte de bliver benyttet, da dette ville have taget væsentligt længere tid at implementere.\\
+
+Funktionen til indlæsningen af databasen af ord (kode \ref{code:spelldbgrab}) modtager en pointer til antallet af elementer indlæst. Derudover returnerer funktionen de indlæste ord. Funktionen starter med at allokere plads til de indlæste ord. Derefter benyttes en for-løkke til at indlæse alle ord indtil EOF\footnote{EOF: End of file}. For-løkken sørger for at tælle, antallet af elementer indlæst, op. Under hver indlæsning af et ord tjekker funktionen, om der er allokeret nok plads. Hvis der ikke, bliver der allokeret mere plads. Til slut returneres alle ord som et string array\footnote{string array: char **}.
+
+\kode{Kode/Dele/spelldbgrab.c}{Indlæsning af kendte ord fra ordlisten}{spelldbgrab}
+
+Til at finde mulige ord ud fra input-ordet benyttes 4 metoder: Indsætning, sletning, udskiftning og ombytning.\\
+
+Metoden "indsætning" indsætter alle mulige bogstaver i input i alle mulige positioner. Af antal af mulige kombinationer giver det (1 + ordets længde) * antallet af bogstaver i alfabetet. Der adderes med 1, fordi der både kan indsættes et bogstav før og efter hvert bogstav, hvilket giver en mulig ekstra position fordi der både skal være et bogstav før og efter et ord.\\
+
+Funktionen til indsættelsen vises i kode \ref{code:spellinsert}. Det kan her ses at funktionen allokerer hukommelse til hvert element og gemmer outputtet i input/output-parameteren output. Funktionen looper igennem vha. 2 for-løkker, hvor den ene går igennem alle mulige bogstaver, mens den anden går igennem alle mulige positioner på input. Funktionen benytter memmove til at rykke elementerne i arrayet et index frem fra det index der skal indsættes et bogstav i. Til slut indsættes \textbackslash0 som afslutter en string.
+
+\kode{Kode/Dele/spellinsert.c}{Indsættelse af bogstav i input}{spellinsert}
+
+Sletning af et bogstav vises i kode \ref{code:spellremove}. Det kan ses at på samme måde som indsættelselsen (kode \ref{code:spellinsert}) benyttes dynamisk lageralokering - bortset fra at der skal være plads til 2 tegn mindre, fordi der ved indsætning bliver tilføjet et tegn, mens der under sletning bliver fjernet et tegn. memove benyttes igen til at rykke elementerne i arrayet og til sidst indsættes \textbackslash0 som afslutter teksten. Antallet af mulige sletninger kan beregnes til antallet af bogstaver i ordet.
+
+\kode{Kode/Dele/spellremove.c}{Sletning af bogstav i input}{spellremove}
+
+Udskiftning af et bogstav vises i kode \ref{code:spellreplace}. Der i denne funktion også benyttet dynamisk lagerallokering. Funktionen fungerer vha. 2 for-løkker, hvor den ene holder styr på nuværende bogstav, mens den anden holder styr på bogstavet der skal udskiftes. I for-løkkerne udskiftes bostavet i index (fra for-løkken) med et andet bostav. Antallet af mulige udskiftninger kan beregnes til at være antallet af bogstaver i ordet * antallet af bogstaver i alfabetet.
+
+\kode{Kode/Dele/spellreplace.c}{Udskiftning af bogstav i input}{spellreplace}
+
+Ombytning af to bogstaver ved siden af hinanden vises i kode \ref{code:spelltranspose}. Dynamisk lagerallokering er benyttet i denne funktion til at gemme output. Funktionen fungerer vha. en for-løkke der går fra 0 op til længden af input - 1, som også er antallet af mulige ombytninger.
+
+\kode{Kode/Dele/spelltranspose.c}{Ombytning af 2 bogstaver ved siden af hinanden i input}{spelltranspose}
+
+Selve stavekontrollen af et ord sker i 6 trin. De 6 forskellige trin er opstillet her:
+\begin{enumerate}
+    \item Sammenligning af input og alle ord i databasen. Hvis ordet matcher returneres der, da der ikke er behov for rettelse
+    \item Alle mulige rettelser findes for redigeringsafstand 1
+    \item Sammenligning af databaseord med ord fundet med redigeringsafstand 1, finder alle mulige ord, hvis flere forskellige ord bliver fundet returneres det første, men lighedsgraden bliver lavere
+    \item Alle mulige rettelser findes for redigeringsafstand 2
+    \item Sammenligning af databaseord med ord fundet med redigeringsafstand 2, finder alle mulige ord, returnerer første match.
+    \item Hvis ingen mulige rettelser blev fundet returneres en NULL pointer\footnote{En pointer der ikke peger på noget i lageret}
+\end{enumerate}
+
+Punkterne vil herunder blive gennemgået i detaljer.
+
+\subsubsection*{Punkt 1 - Sammenligning af input og alle ord i databasen}
+I trin 1 af stavekontrollen forsøges det vha. en for-løkke at finde et match med input og et genkendt ord fra databasen vha. strcmpI. Hvis et match bliver fundet vil programmet rydde op efter hukommelse brugt under indlæsningen af databaseordene. Derudover vil lighedsgraden sættes til 100\%. Input vil herefter blive lagt over i en ny variabel og der så bliver returneret. Se kode \ref{code:spellstep1}
+
+\kode{Kode/Dele/spellstep1.c}{Trin 1 i stavekontrollen: sammenligning af input med kendte ord}{spellstep1}
+
+\subsubsection*{Punkt 2 - Alle mulige rettelser findes for redigeringsafstand 1}
+I trin 2 af stavekontrollen indlæses alle mulige rettelser med redigeringsafstand 1. Til formålet genereres et array. Dette udregnes vha. funktioner som finder antallet af mulige rettelser for indsættelse, slettelse, udskiftning og ombytning.\\
+
+Dernæst bliver det dynamisk allokerede array fyldt op med mulige rettelser vha. funktionerne til indsættelse, slettelse, udskiftning og ombytning. Se kode \ref{code:spellstep2}.
+
+\kode{Kode/Dele/spellstep2.c}{Trin 2 i stavekontrollen: indlæsning af mulige rettelser med redigeringsafstand 1}{spellstep2}
+
+\subsubsection*{Punkt 3 - Sammenligning med databaseord fundet med redigeringsafstand 1}
+I trin 3 af stavekontrollen forsøges der vha. strcmpI at finde et match mellem ord i databasen og de mulige redigeringer med redigeringsafstand 1. Hvis der bliver fundet et match, bliver dette lagt i en midlertidig variabel. Dernæst vil programmet se om der er flere forskellige match - hvis dette er tilfældet, sættes lighedsgraden til 30\% mens den er 60\%, hvis kun et match kunne findes. Programmet vil i tilfælde af et match rydde op i den midlertidige hukommelse fra både den indlæste database og hukommelsen til at holde mulige ændringer med redigeringsafstand 1. Programmet vil dernæst returnere det første match. Se kode \ref{code:spellstep3}
+
+\kode{Kode/Dele/spellstep3.c}{Trin 3 i stavekontrollen: tjek af match mellem databasen og rettelser med redigeringsafstand 1}{spellstep3}
+
+\subsubsection*{Punkt 4 - Alle mulige rettelser findes for redigeringsafstand 2}
+I trin 4 af stavekontrollen indlæses alle mulige rettelser for redigeringsafstand 2. Programmet benytter arrayet fra redigeringsafstand som input, og free'er arrayet fra redigeringsafstand 1 så snart det er blevet brugt. Funktionen fungerer tilnærmelsesvis på samme måde som med redigeringsafstand 1 - forskellen er at input er et array i stedet. Dette array bliver så loopet igennem vha. en for-løkke. Se kode \ref{code:spellstep4}.
+
+\kode{Kode/Dele/spellstep4.c}{Trin 4 i stavekontrollen: indlæsning af mulige rettelser med redigeringsafstand 2}{spellstep4}
+
+\subsubsection*{Punkt 5 - Sammenligning med databaseord fundet med redigeringsafstand 2}
+
+I trin 5 forsøges det at finde et match mellem et ord i databasen samt mulige redigeringer med redigeringsafstand 2. Funktionen udnytter samme princip som trin 3 - forskellen er at der i trin 5 ikke forsøges at finde flere forskellige matches, da funktionen altid returnerer det første og sætter lighedsgraden til 20\%. Se kode \ref{code:spellstep5}
+
+\kode{Kode/Dele/spellstep5.c}{Trin 5 i stavekontrollen: tjek af match mellem databasen og rettelser med redigeringsafstand 2}{spellstep5}
+
+\subsubsection*{Punkt 6 - Hvis ingen mulige rettelser, returnes en NULL pointer}
+
+Hvis ingen mulige rettelser blev fundet fjernes alt midlertidig hukommelse først og en NULL pointer returneres. Se kode i bilag \ref{sec:bilcd}
+
+%\kode{Kode/Dele/spellstep6.c}{Trin 6 i stavekontrollen: intet blev fundet - returnerer en NULL pointer}{spellstep6}
+
+
+\subsubsection*{Opsamling}
+I dette afsnit blev der blevet kigget nærmere på hvordan programmet virker i detaljer. For at vide om systemet virker, som det skal, benyttes tests. I afsnittet \ref{sec:eksperimenter}, vil programmet blive testet for at finde ud af om det virker efter hensigten.

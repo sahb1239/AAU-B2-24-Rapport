@@ -1,0 +1,67 @@
+%Skrevet af Kim
+%Sidst rettet: 10-12-2013, 02:20, Jimmææææh
+%Sidst rettet: 16-12-2013 Kl. 03:56 Kim 
+\label{sec:tilstandsmaskine}
+I dette afsnit vil tilstandsmaskiners operationer redegøres, for at undersøge om virkemåden kan anvendes i en softwareløsning. Derudover vil der blive redegjort for de symboler, som bruges til at definere en tilstandsmaskine. Teorien der bliver anvendt i dette afsnit, er et uddrag af professoren Michael Sipsers bog \cite{ComputationTheory}. \\
+En tilstandsmaskine kan bruges til at give et grafisk overblik, i hvordan et program er opbygget. Et program som har en række handlinger, skal kan med fordel opbygges i form af en tilstandsmaskiner. Herved er det muligt at ændre tilstanden løbende - afhængig af forskellige parametre. \\
+
+Tilstandsmaskiner bruges til at beskrive en handlingsrækkefølge, som et program kronologisk eksekverer. \\
+
+Herunder beskrives symboler forbundet med tilstandsmaskiner :
+\begin{enumerate}
+    \item $Q$, beskriver det antal samlede tilstande, som er tilstede i tilstandsmaskinen
+    \item $\Sigma$, beskriver de input parametre (som figuren kalder alfabetet) der skal bruges til at bestemme hvordan tilstandsmaskinen skal køre
+    \item $\delta$, også kaldet transitions funktionen, som beskriver hvordan tilstandene ændre sig i henhold til de inputs der kan være
+    \item $q_0$, beskriver at $q_0$ "tilhører" værdien $Q$. $q_0$ også kaldet start tilstanden er den første tilstand som de forskellige inputs skal igennem for at komme videre i tilstandensmaskinen
+    \item $F$ beskriver de \textit{accept tilstande} som tilstandsmaskinen har. I skemaet ovenover beskrives det at $F$ er en del af de tilstande som $Q$ indeholder
+\end{enumerate}
+
+For at beskrive tilstandmaskiner på et mere teoretisk plan, kan det bedst betragtes igennem et tilstandsdiagram. I Figur \ref{fig:tilstandsmaskine} ses et eksempel på en tilstandsmaskine $M1$. $M1$ beskrives på følgende måde. $M1$ = ($Q$,$\Sigma$, $\delta$, $q_0$, $F$) Derved kan man sige at disse parametre udgøre $M1$.
+\figur{Figurer/eks_til_tilstandsmaskine.png}{Dette er et eksempel på hvordan en tilstandsmaskine kan opbygges\cite{ComputationTheory}}{tilstandsmaskine}
+Et tilstandsdiagram indeholder typisk tilstandene, som tilstandsmaskinen kan være i. \\ 
+En start tilstand, $q_1$ og nogle tilstande efter, $q_2$, $q_3$... op til $q_n$. Hvis tilstandsmaskinen for et stemmestyringsprogram, får et input det ikke genkender, kan programmet ikke fortsætte til næste tilstand. 
+Det antages, at $M1$ kan have 3 tilstande: $q_1$, $q_2$ og $q_3$.\\
+
+Hvis tilstandsmaskinen eksempelvis får "Jarvis" som inputstreng, læses denne streng (Afsnit \ref{sec:stavekontrol}) og genererer en returværdi. Returværdien vil i dette tilfælde være 1 eller 0, hvor 1 = true og 0 = false (Nærmere beskrevet i afsnittet \ref{sec:implementation}). \\
+Programmet starter ved at kigge i $M1$s start-tilstand, $q_1$. Programmet læser så inputstrengen fra venstre mod højre, symbol efter symbol og går så systematisk frem i tilstande i forhold til længden på inputstrengen. Når det sidste symbol er indlæst, producerer $M1$ returværdien. Returværdien vil dermed være "1", hvis $M1$ er i en "1"-tilstand, og "0", hvis $M1$ er i tilstanden "0". Med ovenstående eksempel, "Jarvis", sker følgende trin i tilstandsmaskinen:
+\begin{enumerate}
+    \item Tilstandsmaskinen $M1$ starter i tilstanden $q_1$
+    \item Maskinen læser J, går fra $q_1$ til $q_2$
+    \item Læser A, går fra $q_2$ til $q_2$
+    \item Læser R, går fra $q_2$ til $q_3$
+    \item Læser V, går fra $q_3$ til $q_2$ 
+    \item Læser I, går fra $q_2$ til $q_3$
+    \item Læser S, går fra $q_3$ til $q_2$
+    \item Maskinen står i tilstanden "1", da maskinen står i tilstanden $q_2$ og brugerens input er indlæst.
+\end{enumerate}
+
+Igennem den tidligere angivet definition, kan tilstandsmaskinen, $M1$, opskrives:\\
+\begin{enumerate}
+    \item $Q$ = \{$q_1$, $q_2$, $q_3$\}
+    \item $\Sigma$ = \{0, 1\}
+    \item $\delta$ kan beskrives som transitions-funktionen og kan skrives i form af en tabel (\ref{tab:signs})
+    \item $q_1$ er start-tilstanden
+    \item $F$ = \{$q_2$\}
+\end{enumerate}
+
+\begin{table}[h]
+    \centering
+    \begin{threeparttable}
+        \begin{tabular}{ l|l }
+        \centering
+            \multirow{1}{*} & 0 \hspace{2 mm} 1\\ \hline 
+            \multirow{1}{*}{$q_1$} & $q_1$ \hspace{2 mm}  $q_2$\\
+            \multirow{1}{*}{$q_2$} & $q_3$ \hspace{2 mm} $q_2$\\
+            \multirow{1}{*}{$q_3$} & $q_2$ \hspace{2 mm} $q_2$
+        \end{tabular}
+    \end{threeparttable}
+    \caption{\textit{Denne figur viser hvordan man kan opstille beskrivelsen af en tilstandsmaskine\cite{ComputationTheory}. \tabelgroup}}
+    \label{tab:signs}
+\end{table}
+%\figur{Figurer/SkemaTilstand.jpg}{Denne figur viser hvordan man kan opstille beskrivelsen af en tilstandsmaskine\cite{ComputationTheory}}{SkemaTilstand} 
+
+Hvis $A$ er sat af alle strenge, som $M$ kan acceptere, kaldes dette sproget for $M$. Dette kan opskrives som $L(M) = A$. Dette betyder at hvis $A$ er nogle strenge og de strenge så ender i en "1"-tilstand så kan man sige at $A$ er sproget for maskinen $M$ som så skrive $L(M) = A$ 
+
+Ovenstående er et meget simplificeret eksempel, men illustrerer det generelle principper bag en tilstandsmaskine.
+
+Hermed afsluttes teoriafsnittet, som leder videre til programmets handlingsproces, som inddrager de beskrevne teorier i en række flowchartdiagrammer.

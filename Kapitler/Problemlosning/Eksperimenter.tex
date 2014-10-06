@@ -1,0 +1,170 @@
+% Søren 06/12-13 - 22:24
+% Mikkel 15/12/13 - 00:30 (fedeste lørdag aften ever!)
+%Sidst rettet: 16-12-2013, 10:11, Jimmi
+For at teste programmet blev manuel testing valgt, der er altså ikke nogle automatiske tests indbygget i programmet, dette pga. tidsmangel i form af at P1 kun består af 10 ECTS point. Derfor er selve programmets funktion prioriteret højere. Derudover er programmet ikke så avanceret at der har været det store behov for automatisk testing.\\
+Første test af programmet ses her:\\
+
+{\bf Basal input/output til programmet}
+\begin{itemize}[itemsep=0ex,topsep=1ex]
+    \item Indtast input => jarvis tænd lyd1 i stuen
+    \item Lyd1 i Stue er tændt
+    \item Indtast input => jarvis hvad er status på lyd1 i stuen
+    \item Lyd1 i Stue er tændt
+    \item Indtast input => jarvis sluk lyd1 i stuen
+    \item Lyd1 i Stue er slukket
+    \item Indtast input => jarvis hvad er status på lyd1 i stuen
+    \item Lyd1 i Stue er slukket
+\end{itemize} 
+
+Det kan her ses at systemet udfører den forventede handling og giver passende output. Systemet viser her at hvis man staver korrekt kan systemet udemærket udføre kommandoerne tænd, sluk og status.\\
+
+{\bf Basal input/output med stavefejl til programmet}
+\begin{itemize}[itemsep=0ex,topsep=1ex]
+    \item Indtast input => jarvis tæd priner på konor
+    \item Mente du: tænd printer på kontor (j/n) => j
+    \item Printer i Kontor er tændt
+    \item Indtast input => jarvis hva er status på printeren på kotor
+    \item Mente du: hvad er status på printer på kontor (j/n) => j
+    \item Printer i Kontor er tændt
+    \item Indtast input => jarvis slu priner på kontor
+    \item Printer i Kontor er slukket
+    \item Indtast input => jarvis hvd er stasus på printeren på kontor
+    \item Mente du: hvad er status på printer på kontor (j/n) => j
+    \item Printer i Kontor er slukket
+\end{itemize}
+
+Ud fra følgende test kan det konkluderes at systemet er i stand til at rette stavefejl. Dermed kan det konkluderes at systemet udemærket er i stand til at forstå kommandoer til at styre huset.\\
+
+{\bf Test af brugersystemet i forbindelse med scenarier}\\
+I denne test lægges der vægt på at programmet ved start skal oplyses om hvem der bruger systemet. Derudover skal den ikke udføre scenariet hvis den pågældende person ikke har adgang til det. Testen dækker samtidig en test af afvikling af scenarier.
+\begin{itemize}[itemsep=0ex,topsep=1ex]
+   \item Hej. Du skal starte med at logge ind. \\Hvilken person er der tale om?
+   \item Indtast input => JegFindesIkke
+   \item Hej. Du skal starte med at logge ind. \\Hvilken person er der tale om?
+   \item Indtast input => Mikkel
+   \item Indtast input => jarvis scenarie slukkontor
+   \item Du har ikke adgang til dette scenarie
+   \item Indtast input => jarvis bruger
+   \item Hvilken person er der tale om?
+   \item Indtast input => jimmi
+   \item Indtast input => jarvis scenarie slukkontor
+   \item TV i Kontor er slukket\\
+         Printer i Kontor er slukket\\
+         Computer i Kontor er slukket
+\end{itemize}
+\kodel{Kode/Dele/db_scenarier.c}{Scenariet "SlukKontor" fra databasen}{db_slukkontor}{3}{3}
+Testen viser at programmet på tilfredsstillende vis beder om input igen, hvis der indtastes en bruger som ikke findes. Efter at brugeren "Mikkel" (med 3. prioritet) er logget på, prøves der på at udføre scenariet "SlukKontor". Programmet afviser dette på grund af manglende rettigheder, hvilket stemmer overens med databasen (kode \ref{code:db_slukkontor})\\
+
+{\bf Tilføjelse og sletning af controllers}\\
+Betingelsen for at kunne bekræfte at tilføjelse og sletning af controllers virker, er at en controller skal kunne tilføjes, for derefter at tændes, få kontrollet status og til sidst slettes igen, så den ikke længere kan tændes, da den dermed ikke findes.
+\begin{itemize}[itemsep=0ex,topsep=1ex]
+    \item Indtast input => jarvis status for mikroovn i koekken
+    \item Input blev ikke forstået
+    \item Indtast input => jarvis tilfoejcontroller
+    \item Hvad er navnet på genstanden?
+    \item Indtast input => Mikroovn
+    \item Hvor er denne placeret?
+    \item Indtast input => Koekken
+    \item Controlleren er tilføjet!
+    \item Indtast input => jarvis taend mikroovn i koekken
+    \item Mikroovn i Koekken er tændt
+    \item Indtast input => jarvis status for mikroovn i koekken
+    \item Mikroovn i Koekken er tændt
+    \item Indtast input => jarvis sletcontroller
+    \item Hvad er navnet på genstanden?
+    \item Indtast input => mikroovn
+    \item Hvor er denne placeret?
+    \item Indtast input => koekken
+    \item Controlleren er fjernet!
+    \item Indtast input => jarvis status for mikroovn i koekken
+    \item Input blev ikke forstået
+\end{itemize}
+
+Ud fra testen ses det at controlleren ikke kan findes før den er tilføjet vha. kommandoen "jarvis tilfoejcontroller" - den kan derefter findes indtil den slettes vha. "sletcontroller". Det kan dermed konkluderes at tilføjelse og sletning af controllers fungerer.\\
+
+{\bf Tilføjelse og sletning af scenarier}\\
+Denne test har samme betingelser som controllers - ikke fundet, tilføj, fundet, slet og igen ikke fundet.
+\begin{itemize}[itemsep=0ex,topsep=1ex]
+   \item Indtast input => jarvis scenarie tester
+   \item Input blev ikke forstået
+   \item Indtast input => jarvis tilfoejscenarie
+   \item Skal prioritet 1 have adgang til dette scenarie? 0 = nej, 1 = ja
+   \item Indtast input => 1
+   \item Skal prioritet 2 have adgang til dette scenarie? 0 = nej, 1 = ja
+   \item Indtast input => 1
+   \item Skal prioritet 3 have adgang til dette scenarie? 0 = nej, 1 = ja
+   \item Indtast input => 1
+   \item Hvad er controller 1s ID?
+   \item Indtast input => 90801
+   \item Skal denne tændes eller slukkes? 0 = slukket, 1 = tændt
+   \item Indtast input => 1
+   \item Hvad er controller 2s ID?
+   \item Indtast input => 90802
+   \item Skal denne tændes eller slukkes? 0 = slukket, 1 = tændt
+   \item Indtast input => 1
+   \item Hvad er controller 3s ID?
+   \item Indtast input => 90803
+   \item Skal denne tændes eller slukkes? 0 = slukket, 1 = tændt
+   \item Indtast input => 1
+   \item Hvad skal kommandoen være?
+   \item Indtast input => tester
+   \item Scenariet er tilføjet!
+   \item Indtast input => jarvis scenarie tester
+   \item Lyd1 i Stue er tændt\\
+         Lyd2 i Stue er tændt\\
+         Lyd3 i Stue er tændt
+   \item Indtast input => jarvis sletscenarie
+   \item Hvilket scenarie vil du gerne fjerne?
+   \item Indtast input => tester
+   \item Scenariet er fjernet!
+   \item Indtast input => jarvis scenarie tester
+   \item Input blev ikke forstået
+\end{itemize}
+Testen forløb tilfredsstillende og opfyldte de opstillede betingelser.\\
+
+{\bf Tilføjelse og sletning af brugere}\\+
+Denne test vil forløbe som de to forrige.
+\begin{itemize}[itemsep=0ex,topsep=1ex]
+    \item Indtast input => jarvis bruger
+    \item Hvilken person er der tale om?
+    \item Indtast input => Svend
+    \item Input blev ikke forstået
+    \item Indtast input => jarvis tilfoejbruger
+    \item Hvilken person er der tale om?
+    \item Indtast input => Svend
+    \item Hvilken prioritet?
+    \item Indtast input => 2
+    \item Brugeren er nu tilføjet!
+    \item Indtast input => jarvis bruger
+    \item Hvilken person er der tale om?
+    \item Indtast input => svend
+    \item Svend er logget ind
+    \item Indtast input => jarvis bruger
+    \item Hvilken person er der tale om?
+    \item Indtast input => mikkel
+    \item Mikkel er logget ind
+    \item Indtast input => jarvis sletbruger
+    \item Hvilken person er der tale om?
+    \item Indtast input => svend
+    \item Brugeren er nu slettet!
+    \item Indtast input => jarvis bruger
+    \item Hvilken person er der tale om?
+    \item Indtast input => svend
+    \item Input blev ikke forstået
+\end{itemize}
+Testen forløb tilfredsstillende og opfyldte de opstillede betingelser.\\
+
+{\bf Input med flere handlinger}
+For at teste om systemet fungerer korrekt skal der indtastes et input med flere handlinger, for derefter at tjekke status på dem enkeltvis, til at sikre sig at de begge er blevet tændt.
+\begin{itemize}[itemsep=0ex,topsep=1ex]
+    \item Indtast input => jarvis taend printer og computer paa kontor
+    \item Printer i Kontor er tændt\\
+          Computer i Kontor er tændt
+    \item Indtast input => jarvis status for printer paa kontor
+    \item Printer i Kontor er tændt
+    \item Indtast input => jarvis status for computer paa kontor
+    \item Computer i Kontor er tændt
+\end{itemize}
+Det ses at både printeren og computeren er blevet tændt, hvilket må betyde at det fungerer at indtaste et input med flere handlinger.\\
+
+Med dette er alle punkter i kravspecifikationen blevet testet og belyst.
